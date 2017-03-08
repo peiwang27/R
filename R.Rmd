@@ -15,7 +15,6 @@ library(reshape2)
 library(magrittr)
 library(tidyverse)
 library(car)
-set.seed(100)
 ```
 # 数据的读取
 ## excel文件的读取
