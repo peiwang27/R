@@ -1,0 +1,458 @@
+---
+title: "R语言总结"
+author: "machuan"
+date: "1/6/2017"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# 加载的包及基本设置
+```{r}
+library(ggplot2)
+library(reshape2)
+library(magrittr)
+library(tidyverse)
+library(car)
+set.seed(100)
+```
+# 数据的读取
+## excel文件的读取
+- RODBC包
+library(RODBC)
+con <- obdcConnectExcel2007(file)
+sqlTables(con) # 查看excel文件中sheet的名称
+sqlFetch(con, sheet_name)
+odbcClose(con)
+**当文件中的某列包含不同类型的数据时，读取的数据将变为NA，只能选择其他的数据读取方式。RODBC包最多能读取的列只有280列，多出的将丢弃，遇此类情况同样只能选择其他的包。**
+- xlsx包
+library(xlsx)
+read.xlsx(file, sheet_index, encoding)
+**效率低，容易出现内存不够用**
+- openxlsx包
+library(openxlsx)
+read.xlsx(file, sheet_index)
+**不能读取xls文件**
+- gdata包
+library(gdata)
+read.xls(file, fileEncoding, sep)
+**基本只能处理utf8编码**
+- readxl包
+library(readxl)
+read_excel(file, coltype)
+**不能读取xls**
+## json数据的获取
+```{r }
+library(jsonlite)
+spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
+names(spending)
+meta <- spending$meta
+hospital_spending <- data.frame(spending$data)
+colnames(hospital_spending) <- make.names(spending$meta$view$columns$name)
+hospital_spending <- select(hospital_spending, -c(sid:meta))
+```
+
+# 字符串的处理
+```{r stringr包}
+library(stringr)
+
+```
+
+# R语言高性能包
+- data.table包
+```{r data.table}
+library(data.table)
+
+```
+# R语言数据预处理
+- 数据缺失
+```{r}
+library(Rcpp)
+library(mice)
+data("nhanes2")
+head(nhanes2)
+complete.cases(nhanes2) %>% sum
+md.pattern(nhanes2)
+```
+
+# R语言数据整形
+## transform()、with()函数
+transform()函数对数据框进行操作可以增加新列，改变列的取值，或者通过赋值为NULL删除列。
+with()函数的使用不限制数据框。
+```{r transform()和with()函数}
+# transform()
+data("airquality")
+head(airquality)
+transform(airquality, log.Ozone=log(Ozone), Wind=Wind^2, Temp=NULL) %>% head
+# with()
+with(airquality, {
+  log.Ozone <- log(Ozone)
+  Wind <- Wind^2
+  rm(Ozone)
+})
+```
+## aggregate()函数
+```{r aggregate()}
+data(mtcars)
+attach(mtcars)
+aggregate(mtcars, by=list(cyl=cyl, vs=vs), mean, drop = F)
+aggregate(cbind(mpg, hp)~cyl+gear, data=mtcars, FUN=mean)
+```
+## reshape2包
+```{r reshape2}
+data("airquality")
+head(airquality)
+aqm <- melt(airquality, id=c('Month', 'Day'), measure.vars=c('Wind', 'Temp'))
+dcast(aqm, Day~Month+variable)
+dcast(aqm, Month~variable, sum)
+```
+## plyr包
+函数split()可以按照分组因子，把向量，矩阵和数据框进行适当的分组,它的返回值是一个列表，代表分组变量每个水平的观测。这个列表可以使用sapply(), lappy()进行处理（apply – combine步骤），得到问题的最终结果。
+```{r plyr}
+library(plyr)
+library(MASS)
+data(Cars93)
+head(Cars93)
+g <- split(Cars93$Price, Cars93$Origin)
+sapply(g, sum)
+```
+## dplyr包
+```{r dplyr}
+library(dplyr)
+library(Lahman)
+library(hflights)
+library(ggplot2)
+h_df <- tbl_df(hflights)
+head(h_df)
+# 筛选
+filter(h_df, Month %in% c(1, 2) & DayofMonth ==1) %>% head
+# 排列
+arrange(h_df, desc(DayofMonth), desc(Month), Year) %>% head
+# 选择
+select(h_df, Month:ArrTime) %>% head
+# 变形
+mutate(h_df, gain=ArrTime-DepTime) %>% head
+# 汇总
+summarise(h_df, delay=mean(DepDelay, na.rm = T), total_delay=sum(DepDelay, na.rm = T), num_delay=length(DepDelay))
+# 抽样, 按个数抽取或者按照比例抽取
+sample_n(h_df, 10)
+sample_frac(h_df, 0.0001)
+# 计数
+count(h_df, Year, Month, ArrTime) %>% head
+# 分组
+planes <- group_by(h_df, TailNum)
+delay <- summarise(planes,
+                   count = n(),
+                   dist = mean(Distance, na.rm = T),
+                   delay = mean(ArrDelay, na.rm = T))
+delay <- filter(delay, count>20, dist<2000)
+ggplot(delay, aes(x=dist, y=delay)) +
+  geom_point(aes(size=count), alpha=1/2) +
+  geom_smooth()
+```
+## 数据合并
+merge(x, y, by = intersect(names(x), names(y)),
+      by.x = by, by.y = by, all = FALSE, all.x = all, all.y = all,
+      sort = TRUE, suffixes = c(".x",".y"),
+      incomparables = NULL, ...)
+```{r merge()}
+authors <- data.frame(
+    surname = I(c("Tukey", "Venables", "Tierney", "Ripley", "McNeil")),
+    nationality = c("US", "Australia", "US", "UK", "Australia"),
+    deceased = c("yes", rep("no", 4)))
+books <- data.frame(
+    name = I(c("Tukey", "Venables", "Tierney",
+             "Ripley", "Ripley", "McNeil", "R Core")),
+    title = c("Exploratory Data Analysis",
+              "Modern Applied Statistics ...",
+              "LISP-STAT",
+              "Spatial Statistics", "Stochastic Simulation",
+              "Interactive Data Analysis",
+              "An Introduction to R"),
+    other.author = c(NA, "Ripley", NA, NA, NA, NA,
+                     "Venables & Smith"))
+m1 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all.x = T)
+m2 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all.y = T)
+m3 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all = T)
+```
+# R语言绘图
+## 散点图
+- 使用plot()函数绘制
+```{r plot()绘制散点图}
+plot(rnorm(200), rnorm(200), type='p', col='red')
+```
+- 使用geom_point()绘制散点图
+```{r geom_point()绘制散点图}
+df <- data.frame(x=rnorm(200), y=rnorm(200))
+ggplot(df, aes(x=x, y=y)) + geom_point()
+```
+- qplot()函数
+```{r qplot()}
+data(diamonds)
+dsmall <- diamonds[sample(nrow(diamonds), 100), ]
+qplot(x=carat, y=price, data=dsmall, shape=color)
+qplot(x=carat, y=price, colour=color, data=dsmall)
+qplot(x=carat, y=price, data=diamonds, alpha=1/100, 
+      geom=c('point', 'smooth'))
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'))
+
+# 添加平滑曲线
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'),
+      span=0.1)
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'),
+      span=1)
+```
+## 折线图
+- plot()绘制
+```{r plot()绘制}
+data(cars)
+plot(cars, type='p')
+lines(stats::lowess(cars))
+```
+- geom_line()绘制
+```{r geom_line绘制}
+data(economics)
+ggplot(economics, aes(x=date, y=unemploy)) + geom_line()
+```
+## 条形图
+- barplot()函数绘制
+```{r barplot()}
+data(VADeaths)
+barplot(VADeaths, beside = T,
+        col = rainbow(20),
+        legend = row.names(VADeaths),
+        ylim = c(0, 100))
+
+barplot(VADeaths, beside = F,
+        col = rainbow(20),
+        legend = row.names(VADeaths),
+        ylim = c(0, 100))
+```
+- geom_bar()函数绘制
+ggplot函数绘制图形所使用的数据为data.frame，因为VADeaths数据集的格式为matrix，因此首先使用melt()函数将matrix转化为data.frame.
+调节条形图的样式使用geom_bar()函数的position参数.
+```{r geom_bar()函数}
+data(mpg)
+ggplot(mpg, aes(class)) + geom_bar()
+
+VA.melt <- melt(VADeaths)
+ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2)) +
+  geom_bar(stat = 'identity')
+
+ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2)) +
+  geom_bar(stat = 'identity', position = 'dodge')
+
+ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2))+
+  geom_bar(stat = 'identity', position = 'fill')
+```
+## 面积图
+- geom_area()函数
+**需要查询geom_area(stat='bin')**的错误如何修正
+```{r geom_area()函数}
+data(diamonds)
+#ggplot(diamonds, aes(x=price, fill=cut)) +
+#  geom_bar(stat = 'identity')
+```
+## 密度估计图
+- plot()函数
+```{r plot()函数}
+ plot(density(rnorm(200)))
+```
+- geom_density()函数
+ggplot中aes() 函数使用col或者fill参数，得到的结果是不同的.
+```{r geom_density()函数}
+data(diamonds)
+ggplot(diamonds, aes(x=depth, col=cut)) +
+  geom_density()
+
+ggplot(diamonds, aes(x=depth, fill=cut)) +
+  geom_density()
+```
+## 频数图
+- geom_freqpoly()函数
+```{r geom_freqpoly()函数}
+data(diamonds)
+ggplot(diamonds, aes(x=price, col=cut)) +
+  geom_freqpoly(binwidth=500)
+```
+## 直方图
+- hist()函数
+```{r hist()函数}
+data(islands)
+hist(islands, breaks = 20, col='red', border='black', freq = T)
+hist(islands, breaks = 20, col='red', border='black', freq = F)
+```
+- geom_histogram()函数
+```{r geom_histogram()}
+ggplot(as.data.frame(islands), aes(islands)) +
+  geom_histogram(bins = 30)
+```
+## 箱线图
+- boxplot()函数
+```{r boxplot()函数}
+data("InsectSprays")
+boxplot(count~spray, data=InsectSprays, col='light gray')
+```
+- 
+- geom_boxplot()函数
+```{r geom_boxplot()}
+ggplot(InsectSprays, aes(x=spray, y=count)) +
+  geom_boxplot()
+
+ggplot(InsectSprays, aes(x=spray, y=count)) +
+  stat_boxplot(geom='errorbar', width=0.5) +
+  geom_boxplot()
+```
+## 提琴图
+- vioplot()函数
+```{r vioplot()}
+data(mtcars)
+library(sm)
+library(vioplot)
+x1 <- mtcars$mpg[mtcars$cyl==4]
+x2 <- mtcars$mpg[mtcars$cyl==6]
+x3 <- mtcars$mpg[mtcars$cyl==8]
+vioplot(x1, x2, x3, names = c('4cyl', '6 cyl', '8 cyl'),
+        col='gold')
+```
+- geom_violin()函数
+```{r geom_violin()函数}
+ggplot(mtcars, aes(x=factor(cyl), y=mpg)) + geom_violin()
+
+ggplot(mtcars, aes(x=factor(cyl), y=mpg)) + geom_violin() +
+  geom_boxplot(width=0.1)
+```
+## cleverland点图
+- dotchart()函数
+```{r dotchart()函数}
+data(mtcars)
+dotchart(mtcars$mpg, labels = row.names(mtcars), cex=0.6,
+         main='不同汽车的mpg',
+         xlab='mpg',
+         family='Kai')
+```
+- geom_dotplot()函数
+```{r geom_dotplot()函数}
+ggplot(mtcars, aes(x=mpg, y=row.names(mtcars), fill=row.names(mtcars))) +
+  geom_dotplot(binaxis = 'y',
+               stackgroups = T,
+               binwidth = 1,
+               method = 'histodot')
+```
+## 热力图
+- heatmap()函数
+```{r heatmap()}
+x <- as.matrix(mtcars)
+rc <- rainbow(nrow(mtcars), start=0, end=0.3)
+cc <- rainbow(ncol(mtcars), start=0, end=0.3)
+hv <- heatmap(x, col=cm.colors(256),
+              scale='column',
+              RowSideColors = rc,
+              ColSideColors = cc)
+```
+
+
+# 基本统计分析
+```{r 描述性统计分析}
+# 基本的描述统计
+library(Hmisc)
+data(mtcars)
+str(mtcars)
+summary(mtcars)
+Hmisc::describe(mtcars)
+
+# 频数表和列联表
+library(vcd)
+head(Arthritis)
+```
+# 回归分析
+拟合线性回归的基本函数lm()，调用的格式为：
+myfit <- lm(formula, data)
+formula为回归表达式，data为数据框。
+
+对于考虑交互关系的回归，可以通过effects包的effect()函数，查看交互项之间的影响。
+调用的格式为：plot(effect(term, mod, xlevels), multiline=T),其中term表示term表示要画的交互项，mod为拟合的模型，xlevel为设定的常量的取值。
+```{r lm()}
+data(women)
+myfit1 <- lm(weight~height, women)
+summary(myfit1)
+op <- par(no.readonly = T)
+par(mfrow=c(2,2))
+plot(myfit1)
+
+myfit2 <- lm(weight~height+I(height^2), data=women)
+summary(myfit2)
+plot(myfit2)
+par(op)
+plot(women$height, women$weight, xlab = 'height', ylab = 'weight')
+lines(women$height, fitted(myfit2))
+
+# 多元线性回归
+state <- state.x77[,
+                   c('Murder', 'Population', 'Illiteracy','Income',
+                     'Frost')] %>% as.data.frame()
+myfit3 <- lm(Murder~Population+Illiteracy+Income+Frost, data = state)
+
+# 考虑交互关系的回归
+library(effects)
+data(mtcars)
+myfit4 <- lm(mpg~hp+wt+hp:wt, data = mtcars)
+plot(effect('hp:wt', myfit4, xlevels=list(wt=c(1,2,3,4))), multiline = T)
+qqPlot(myfit3, labels=row.names(state), id.method='identify',simulate=T, main='Q-Q plot')
+```
+# 方差分析
+## 单因素方差分析
+```{r 单因素方差分析}
+# 单因素方差分析
+library(multcomp)
+library(mvtnorm)
+library(survival)
+library(TH.data)
+library(MASS)
+library(gplots)
+attach(cholesterol)
+table(cholesterol$trt)
+cholesterol %>% group_by(trt) %>%
+  summarise(mean=mean(response), sd=sd(response))
+aov_fit1 <- aov(response~trt, data=cholesterol)
+
+plotmeans(response~trt, xlab='trt', ylab='response', main='mean plot')
+detach(cholesterol)
+# 多重比较
+# glht()函数可以更好地表现多重比较的结果
+library(multcomp)
+TukeyHSD(aov_fit1)
+op <- par(no.readonly = T)
+par(mar=c(4,3,8,2))
+tuk <- glht(aov_fit1, linfct=mcp(trt='Tukey'))
+plot(cld(tuk, level=0.05), col='lightgrey')
+
+par(las=2)
+par(mar=c(5,4,8,2))
+plot(TukeyHSD(aov_fit1))
+par(op)
+
+# 评估检验的假设条件
+# 1.正态性检验
+library(car)
+qqPlot(lm(response~trt, data=cholesterol), simulate = T,
+       main = 'QQ plot', labels = T)
+# 2.方差齐次性检验
+bartlett.test(response~trt, data=cholesterol)
+
+```
+## 单因素协方差分析
+```{r 单因素协方差分析}
+data("litter", package = 'multcomp')
+attach(litter)
+table(dose)
+litter %>% group_by(dose) %>% summarise(mean=mean(weight))
+detach(litter)
+```
