@@ -53,9 +53,10 @@ hospital_spending <- select(hospital_spending, -c(sid:meta))
 ```
 
 # 字符串的处理
-```{r stringr包}
+```{r stringr}
 library(stringr)
-
+data("USArrests")
+head(USArrests)
 ```
 
 # R语言高性能包
