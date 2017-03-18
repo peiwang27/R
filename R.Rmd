@@ -57,6 +57,8 @@ hospital_spending <- select(hospital_spending, -c(sid:meta))
 library(stringr)
 data("USArrests")
 head(USArrests)
+state_name <- row.names(USArrests)
+
 ```
 
 # R语言高性能包
