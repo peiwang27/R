@@ -98,6 +98,16 @@ fruits <- c(
 str_split(fruits, " and ")
 str_split(fruits, " and ", simplify = TRUE)
 ```
+- 正则匹配
+```{r}
+pattern="^[A-Za-z0-9\\._%+-]+@[A-Za-z0-9\\.-]+\\.[A-Za-z]{2,4}$"
+str<-c("abc","someone@qiuworld.com","efg","anotherone@gmail.com","thirdone@yahoo.cn")
+#grepl会返回一个逻辑值，l就代表logical, g就代表global
+grepl(pattern,str)
+grep(pattern,str)
+#regexpr会返回一个数字，1表示匹配，-1表示不匹配，还会返回两个属性，匹配的长度以及是否使用useBytes。useBytes一般很少会使用到false，因为我们不处理宽字符。
+regexpr(pattern,str)
+```
 
 # R语言高性能包
 - data.table包
