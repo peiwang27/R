@@ -59,7 +59,43 @@ library(stringr)
 data("USArrests")
 head(USArrests)
 state_name <- row.names(USArrests)
+# str_extract()
+shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+str_extract(shopping_list, '\\d')
+str_extract(shopping_list, '[a-z]+')
+str_extract(shopping_list, '[a-z]{1,4}')
+str_extract(shopping_list, '\\b[a-z]{1,4}\\b')
 
+# Extract all matches
+str_extract_all(shopping_list, "[a-z]+")
+str_extract_all(shopping_list, "\\b[a-z]+\\b")
+str_extract_all(shopping_list, "\\d")
+
+# Extract all words
+str_extract_all("This is, suprisingly, a sentence.", boundary("word"))
+
+# str_locate & str_locate_all
+fruit <- c("apple", "banana", "pear", "pineapple")
+str_locate(fruit, "$")
+str_locate(fruit, "a")
+str_locate(fruit, "e")
+str_locate(fruit, c("a", "b", "p", "p"))
+
+str_locate_all(fruit, "a")
+str_locate_all(fruit, "e")
+str_locate_all(fruit, c("a", "b", "p", "p"))
+
+# Find location of every character
+str_locate_all(fruit, "")
+
+# str_split
+fruits <- c(
+  "apples and oranges and pears and bananas",
+  "pineapples and mangos and guavas"
+)
+
+str_split(fruits, " and ")
+str_split(fruits, " and ", simplify = TRUE)
 ```
 
 # R语言高性能包
@@ -303,7 +339,6 @@ ggplot(as.data.frame(islands), aes(islands)) +
 data("InsectSprays")
 boxplot(count~spray, data=InsectSprays, col='light gray')
 ```
-- 
 - geom_boxplot()函数
 ```{r geom_boxplot()}
 ggplot(InsectSprays, aes(x=spray, y=count)) +
