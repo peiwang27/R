@@ -246,6 +246,17 @@ devs <- list( p1=list(name="Ken",age=24,
                       interest=c("movies","reading"),
                       lang=list(r=1,cpp=4,python=2)))
 str(devs)
+# list.map()函数提供了list中元素的映射功能
+list.map(devs, age)
+list.map(devs, names(lang))
+list.map(devs, mean(as.numeric(lang))) %>% unlist
+
+list.filter(devs, age>=25) %>% str
+list.filter(devs, 'r' %in% names(lang)) %>% str
+
+list.group(devs, age) %>% str # 互斥分组
+list.class(devs, interest) %>% str # 非互斥分组
+
 ```
 
 # R语言绘图
@@ -486,7 +497,7 @@ d3Sankey(Links = d3links, Nodes = d3nodes, Source = "source",
 
 
 # 基本统计分析
-- 描述性统计
+## 描述性统计
 ```{r 描述性统计分析}
 # 基本的描述统计
 library(Hmisc)
@@ -499,7 +510,9 @@ Hmisc::describe(mtcars)
 library(vcd)
 head(Arthritis)
 ```
-- 抽样
+## 抽样
+strata(data, stratanames=NULL, size, method=c("srswor","srswr","poisson",
+"systematic"), pik,description=FALSE)
 ```{r sample}
 library(MASS)
 data(Insurance)
@@ -507,7 +520,9 @@ data(Insurance)
 Insurance[sample(nrow(Insurance), 10), ] # 无放回抽样
 Insurance[sample(nrow(Insurance), 10, replace = T), ] # 有放回抽样
 # 分层抽样
-
+library(sampling)
+Insurance_sub <- strata(Insurance, stratanames = 'District', size = c(1,2,3,4), method = 'srswor')
+getdata(Insurance, Insurance_sub)
 ```
 
 # 回归分析
