@@ -9,7 +9,7 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 # 加载的包及基本设置
-```{r}
+```{r library}
 library(ggplot2)
 library(reshape2)
 library(magrittr)
@@ -43,7 +43,7 @@ library(readxl)
 read_excel(file, coltype)
 **不能读取xls**
 ## json数据的获取
-```{r }
+```{r jsonlite}
 library(jsonlite)
 spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
 names(spending)
@@ -99,7 +99,7 @@ str_split(fruits, " and ")
 str_split(fruits, " and ", simplify = TRUE)
 ```
 - 正则匹配
-```{r}
+```{r reg expression}
 pattern="^[A-Za-z0-9\\._%+-]+@[A-Za-z0-9\\.-]+\\.[A-Za-z]{2,4}$"
 str<-c("abc","someone@qiuworld.com","efg","anotherone@gmail.com","thirdone@yahoo.cn")
 #grepl会返回一个逻辑值，l就代表logical, g就代表global
@@ -117,7 +117,7 @@ library(data.table)
 ```
 # R语言数据预处理
 - 数据缺失
-```{r}
+```{r missing data}
 library(Rcpp)
 library(mice)
 data("nhanes2")
@@ -232,6 +232,22 @@ m3 <- merge(authors, books,
             by.x = 'surname', by.y = 'name',
             all = T)
 ```
+## 非结构化数据的处理
+```{r rlist}
+library(rlist)
+library(rlist)
+devs <- list( p1=list(name="Ken",age=24,
+                      interest=c("reading","music","movies"),
+                      lang=list(r=2,csharp=4,python=3)),
+              p2=list(name="James",age=25,
+                      interest=c("sports","music"),
+                      lang=list(r=3,java=2,cpp=5)),
+              p3=list(name="Penny",age=24,
+                      interest=c("movies","reading"),
+                      lang=list(r=1,cpp=4,python=2)))
+str(devs)
+```
+
 # R语言绘图
 ## 散点图
 - 使用plot()函数绘制
@@ -470,6 +486,7 @@ d3Sankey(Links = d3links, Nodes = d3nodes, Source = "source",
 
 
 # 基本统计分析
+- 描述性统计
 ```{r 描述性统计分析}
 # 基本的描述统计
 library(Hmisc)
@@ -482,6 +499,17 @@ Hmisc::describe(mtcars)
 library(vcd)
 head(Arthritis)
 ```
+- 抽样
+```{r sample}
+library(MASS)
+data(Insurance)
+# 简单随机抽样
+Insurance[sample(nrow(Insurance), 10), ] # 无放回抽样
+Insurance[sample(nrow(Insurance), 10, replace = T), ] # 有放回抽样
+# 分层抽样
+
+```
+
 # 回归分析
 拟合线性回归的基本函数lm()，调用的格式为：
 myfit <- lm(formula, data)
