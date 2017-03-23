@@ -18,6 +18,23 @@ library(car)
 Sys.setlocale('LC_ALL','C')
 ```
 # 数据的读取
+## 数据核查使用
+```{r}
+# 检查数据是否包含字符窜、以及是否全部为空
+data(Insurance)
+check_in <- function(x){
+  check_vector <- '-|>'
+  return(grepl(check_vector, x) %>% sum)
+}
+
+check_is.na <- function(x){
+  return(is.na(x) %>% sum)
+}
+
+apply(Insurance, 1, check_in)>0
+apply(Insurance, 1, check_is.na)
+```
+
 ## excel文件的读取
 - RODBC包
 library(RODBC)
@@ -621,6 +638,16 @@ litter %>% group_by(dose) %>% summarise(mean=mean(weight))
 detach(litter)
 ```
 # 关联分析
+apriori(data, parameter = NULL, appearance = NULL, control = NULL)
+eclat(data, parameter = NULL, control = NULL)
+```{r arules arulesViz}
+library(arules)
+data("Groceries")
+inspect(Groceries[1:10])
+rules0 <- apriori(Groceries, parameter = list(support=0.001, confidence=0.5))
+rules0
+inspect(rules0[1:10])
+```
 
 # 聚类分析
 # 酬分析
