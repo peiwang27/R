@@ -130,7 +130,7 @@ md.pattern(nhanes2)
 ## transform()、with()函数
 transform()函数对数据框进行操作可以增加新列，改变列的取值，或者通过赋值为NULL删除列。
 with()函数的使用不限制数据框。
-```{r transform()和with()函数}
+```{r transform() with()}
 # transform()
 data("airquality")
 head(airquality)
@@ -524,6 +524,17 @@ library(sampling)
 Insurance_sub <- strata(Insurance, stratanames = 'District', size = c(1,2,3,4), method = 'srswor')
 getdata(Insurance, Insurance_sub)
 ```
+## 相关性分析
+```{r cor cov}
+library(rattle)
+data(weather)
+cor(Insurance$Holders, Insurance$Claims) # 相关系数
+# 计算变量两两之间相关系数
+cor_matrix <- cor(weather[, 12:21], use = 'pairwise')
+
+library(ellipse)
+plotcorr(cor_matrix, col=rep(c('white', 'black'), 5))
+```
 
 # 回归分析
 拟合线性回归的基本函数lm()，调用的格式为：
@@ -609,3 +620,12 @@ table(dose)
 litter %>% group_by(dose) %>% summarise(mean=mean(weight))
 detach(litter)
 ```
+# 关联分析
+
+# 聚类分析
+# 酬分析
+# 判别策树
+# 集成学习
+# 随机森林
+# 支持向量机
+# 神经网络
