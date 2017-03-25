@@ -647,6 +647,14 @@ inspect(Groceries[1:10])
 rules0 <- apriori(Groceries, parameter = list(support=0.001, confidence=0.5))
 rules0
 inspect(rules0[1:10])
+inspect(sort(rules0, by='support')[1:10])
+inspect(sort(rules0, by='confidence')[1:10])
+inspect(sort(rules0, by='lift')[1:10])
+
+rules2 <- apriori(Groceries, parameter = list(maxlen=2, support=0.001, confidence=0.1), appearance = list(rhs='mustard', default='lhs'))
+
+itemsets_apr <- apriori(Groceries, parameter = list(support=0.001, target='frequent itemsets'), control = list(sort=-1))
+
 ```
 
 # 聚类分析
