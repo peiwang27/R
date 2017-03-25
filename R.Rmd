@@ -15,7 +15,7 @@ library(reshape2)
 library(magrittr)
 library(tidyverse)
 library(car)
-Sys.setlocale('LC_ALL','C')
+Sys.setlocale("LC_ALL","Chinese")
 ```
 # 数据的读取
 ## 数据核查使用
@@ -644,6 +644,7 @@ eclat(data, parameter = NULL, control = NULL)
 library(arules)
 data("Groceries")
 inspect(Groceries[1:10])
+
 rules0 <- apriori(Groceries, parameter = list(support=0.001, confidence=0.5))
 rules0
 inspect(rules0[1:10])
@@ -654,12 +655,25 @@ inspect(sort(rules0, by='lift')[1:10])
 rules2 <- apriori(Groceries, parameter = list(maxlen=2, support=0.001, confidence=0.1), appearance = list(rhs='mustard', default='lhs'))
 
 itemsets_apr <- apriori(Groceries, parameter = list(support=0.001, target='frequent itemsets'), control = list(sort=-1))
+inspect(itemsets_apr[1:10])
 
+items_ecl <- eclat(Groceries, parameter = list(minlen=1, maxlen=3, support=0.001, target='frequent itemsets'), control=list(sort=-1))
+inspect(items_ecl[1:10])
+
+# 关联规则的可视化
+library(arulesViz)
+plot(rules0)
+plot(rules0, interactive = T)
+plot(rules0, shading = 'order', control = list(main='two-key plot'))
 ```
 
 # 聚类分析
-# 酬分析
-# 判别策树
+```{r}
+data(Countries)
+```
+
+# 判别分析
+# 决策树
 # 集成学习
 # 随机森林
 # 支持向量机
