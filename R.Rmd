@@ -15,7 +15,6 @@ library(reshape2)
 library(magrittr)
 library(tidyverse)
 library(car)
-Sys.setlocale("LC_ALL","Chinese")
 ```
 # 数据的读取
 ## 数据核查使用
@@ -300,13 +299,9 @@ ggplot(data=mpg) +
   geom_point(mapping=aes(x=displ, y=hwy)) +
   facet_wrap(~class, nrow=2)
 
-ggplot(data=mpg) +
-  geom_point(mapping=aes(x=displ, y=hwy)) +
-  facet_grid(drv~cyl)
+ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(drv~cyl)
 
-ggplot(data=mpg) +
-  geom_point(mapping=aes(x=displ, y=hwy)) +
-  facet_grid(.~cyl)
+ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(.~cyl)
 ```
 - qplot()函数
 ```{r qplot()}
@@ -525,8 +520,8 @@ names(d3links)[5] <- "target"
 names(d3links)[3] <- "value"  
   
 d3links <- subset(d3links, select=c("source", "target", "value"))  
-d3nodes <- subset(d3nodes, select=c("name"))  
-  
+d3nodes <- subset(d3nodes, select=c("name"))
+
 # 画图并保存为html文件  
 d3Sankey(Links = d3links, Nodes = d3nodes, Source = "source",  
          Target = "target", Value = "value", NodeID = "name",  
