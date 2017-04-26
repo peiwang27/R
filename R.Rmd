@@ -6,7 +6,7 @@ output: word_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = T)
 ```
 # 加载的包及基本设置
 ```{r library}
@@ -60,6 +60,7 @@ library(readxl)
 read_excel(file, coltype)
 **不能读取xls**
 ## json数据的获取
+- jsonlite
 ```{r jsonlite}
 library(jsonlite)
 spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
@@ -69,6 +70,13 @@ hospital_spending <- data.frame(spending$data)
 colnames(hospital_spending) <- make.names(spending$meta$view$columns$name)
 hospital_spending <- select(hospital_spending, -c(sid:meta))
 ```
+- rjson
+```{r rjosn}
+head(mtcars)
+jsoncars <- toJSON(mtcars, pretty = T)
+fromJSON(jsoncars)
+```
+
 
 # 字符串的处理
 - stringr()函数
