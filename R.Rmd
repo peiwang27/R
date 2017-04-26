@@ -291,9 +291,22 @@ list.class(devs, interest) %>% str # 非互斥分组
 plot(rnorm(200), rnorm(200), type='p', col='red')
 ```
 - 使用geom_point()绘制散点图
-```{r geom_point()绘制散点图}
+```{r geom_point()}
+data(mpg)
 df <- data.frame(x=rnorm(200), y=rnorm(200))
 ggplot(df, aes(x=x, y=y)) + geom_point()
+
+ggplot(data=mpg) +
+  geom_point(mapping=aes(x=displ, y=hwy)) +
+  facet_wrap(~class, nrow=2)
+
+ggplot(data=mpg) +
+  geom_point(mapping=aes(x=displ, y=hwy)) +
+  facet_grid(drv~cyl)
+
+ggplot(data=mpg) +
+  geom_point(mapping=aes(x=displ, y=hwy)) +
+  facet_grid(.~cyl)
 ```
 - qplot()函数
 ```{r qplot()}
