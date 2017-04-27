@@ -302,6 +302,18 @@ ggplot(data=mpg) +
 ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(drv~cyl)
 
 ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(.~cyl)
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ, colour=drv))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ, group=drv))
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ)) + geom_smooth(mapping=aes(x=hwy, y=displ))
+
+library(tidyverse)
+ggplot(data=mpg, mapping=aes(x=hwy, y=displ)) +
+  geom_point(mapping=aes(colour=class)) +
+  geom_smooth(data=filter(mpg, class=='subcompact'), se=T)
 ```
 - qplot()函数
 ```{r qplot()}
@@ -349,18 +361,10 @@ barplot(VADeaths, beside = F,
 ggplot函数绘制图形所使用的数据为data.frame，因为VADeaths数据集的格式为matrix，因此首先使用melt()函数将matrix转化为data.frame.
 调节条形图的样式使用geom_bar()函数的position参数.
 ```{r geom_bar()函数}
-data(mpg)
-ggplot(mpg, aes(class)) + geom_bar()
+data("diamonds")
+ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut))
+ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut, fill=color))
 
-VA.melt <- melt(VADeaths)
-ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2)) +
-  geom_bar(stat = 'identity')
-
-ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2)) +
-  geom_bar(stat = 'identity', position = 'dodge')
-
-ggplot(VA.melt, aes(x=Var1, y=value, fill=Var2))+
-  geom_bar(stat = 'identity', position = 'fill')
 ```
 ## 面积图
 - geom_area()函数
