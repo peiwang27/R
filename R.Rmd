@@ -195,8 +195,11 @@ sapply(g, sum)
 ```{r dplyr}
 library(dplyr)
 library(Lahman)
+library(nycflights13)
 library(hflights)
 library(ggplot2)
+data(flights)
+
 h_df <- tbl_df(hflights)
 head(h_df)
 # 筛选
@@ -215,15 +218,16 @@ sample_frac(h_df, 0.0001)
 # 计数
 count(h_df, Year, Month, ArrTime) %>% head
 # 分组
-planes <- group_by(h_df, TailNum)
-delay <- summarise(planes,
-                   count = n(),
-                   dist = mean(Distance, na.rm = T),
-                   delay = mean(ArrDelay, na.rm = T))
-delay <- filter(delay, count>20, dist<2000)
-ggplot(delay, aes(x=dist, y=delay)) +
-  geom_point(aes(size=count), alpha=1/2) +
-  geom_smooth()
+delays <- flights %>%
+  group_by(dest) %>%
+  summarise(
+    count=n(),
+    dist=mean(distance, na.rm=T),
+    delay=mean(arr_delay, na.rm=T)
+  ) %>%
+  filter(count>20, dest != 'HNL')
+ggplot(data=delays, mapping=aes(x=dist, y=delay))+geom_point(aes(size=count), alpha=1/3)+geom_smooth(se=T)
+
 ```
 ## 数据合并
 merge(x, y, by = intersect(names(x), names(y)),
@@ -284,6 +288,14 @@ list.class(devs, interest) %>% str # 非互斥分组
 ```
 
 # R语言绘图
+- The Basic Grammer of ggplot
+ggplot(data=<DATA>) +
+    <GEOM_FUNCTION>(
+            mapping=aes(<MAPPING>),
+            stat=<STAT>,
+            position=<POSITION>) +
+    <COORDINATE_SYSTEM> +
+    <FACET_FUNCTION>
 ## 散点图
 - 使用plot()函数绘制
 ```{r plot()绘制散点图}
@@ -292,9 +304,12 @@ plot(rnorm(200), rnorm(200), type='p', col='red')
 - 使用geom_point()绘制散点图
 ```{r geom_point()}
 data(mpg)
-df <- data.frame(x=rnorm(200), y=rnorm(200))
-ggplot(df, aes(x=x, y=y)) + geom_point()
 
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ))
+# 通过position='jitter'解决overplotting的问题
+ggplot(data=mpg) + geom_point(mapping = aes(x=hwy, y=displ), position='jitter')
+
+# 使用facet_grid和facet_wrap函数实现subplot功能
 ggplot(data=mpg) +
   geom_point(mapping=aes(x=displ, y=hwy)) +
   facet_wrap(~class, nrow=2)
@@ -302,6 +317,7 @@ ggplot(data=mpg) +
 ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(drv~cyl)
 
 ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(.~cyl)
+
 
 ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ))
 ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ))
@@ -358,13 +374,16 @@ barplot(VADeaths, beside = F,
         ylim = c(0, 100))
 ```
 - geom_bar()函数绘制
-ggplot函数绘制图形所使用的数据为data.frame，因为VADeaths数据集的格式为matrix，因此首先使用melt()函数将matrix转化为data.frame.
-调节条形图的样式使用geom_bar()函数的position参数.
 ```{r geom_bar()函数}
 data("diamonds")
 ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut))
-ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut, fill=color))
+ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut, fill=clarity))
+# 通过position参数调整柱状图的形状
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='dodge')
 
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='identity')
+
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='fill')
 ```
 ## 面积图
 - geom_area()函数
@@ -422,6 +441,9 @@ ggplot(InsectSprays, aes(x=spray, y=count)) +
 ggplot(InsectSprays, aes(x=spray, y=count)) +
   stat_boxplot(geom='errorbar', width=0.5) +
   geom_boxplot()
+
+data(mpg)
+
 ```
 ## 提琴图
 - vioplot()函数
