@@ -289,6 +289,7 @@ list.class(devs, interest) %>% str # 非互斥分组
 
 # R语言绘图
 - The Basic Grammer of ggplot
+
 ggplot(data=<DATA>) +
     <GEOM_FUNCTION>(
             mapping=aes(<MAPPING>),
