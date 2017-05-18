@@ -183,7 +183,7 @@ dcast(aqm, Month~variable, sum)
 ```
 ## tidyr包
 ```{r tidyr}
-table1 <- read_csv('country, year, case, population
+table1 <- read_csv('country, year, cases, population
                    Afghanistan, 1999, 745, 19987071
                    Afghanistan, 2000, 2666, 20595360
                    Brazil, 1999, 37737, 172006362
@@ -192,7 +192,32 @@ table1 <- read_csv('country, year, case, population
                    China, 2000, 213766, 1280428583')
 
 table2 <- read_csv('country, year, type, count
-                   ')
+                   Afghanistan, 1999, cases, 745
+                   Afghanistan, 1999, population, 19987071
+                   Afghanistan, 2000, cases, 2666
+                   Afghanistan, 2000, population, 20595360')
+
+table3 <- read_csv('country, year, rate
+                   Afghanistan, 1999, 745/19987071
+                   Afghanistan, 2000, 2666/20595360
+                   Brazil, 1999, 37737/172006362
+                   Brazil, 2000, 80488/174504898
+                   China, 1999, 212258/1271915272
+                   China, 2000, 213766/1280428583')
+
+table4a <- read_csv("country, '1999', '2000'
+                    Afghanistan, 745, 2666
+                    Brazil, 37737, 80488
+                    China, 212258, 213766")
+
+table4a %>% gather(2, 3, key='year', value='cases')
+# 另一种表达方式
+table4a %>% gather(year, cases, -country) # 查看help(gather)
+table2 %>% spread(key='type', value='count')
+
+table3 %>% separate(rate, into=c('cases', 'population'),
+                    remove=F, convert=T)
+
 ```
 
 ## plyr包
