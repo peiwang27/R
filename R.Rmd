@@ -220,7 +220,7 @@ table3 %>% separate(rate, into=c('cases', 'population'),
 
 # case study about tidyr using dataset who
 who %>% gather(5:60, key='key', value='cases', na.rm=T) %>% mutate(key=stringr::str_replace(key, 'newrel', 'new_rel')) %>% separate(key, into=c('new', 'type', 'sexage'), sep='_') %>% select(-new, -iso2, -iso3) %>% separate(sexage, c('sex', 'age'), sep=1)
-m``
+```
 
 ## plyr包
 函数split()可以按照分组因子，把向量，矩阵和数据框进行适当的分组,它的返回值是一个列表，代表分组变量每个水平的观测。这个列表可以使用sapply(), lappy()进行处理（apply – combine步骤），得到问题的最终结果。
