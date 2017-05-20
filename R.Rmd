@@ -84,7 +84,21 @@ library(stringr)
 data("USArrests")
 head(USArrests)
 state_name <- row.names(USArrests)
+# str_detect() 检查模式是否匹配
+str_detect(words, '^t') %>% sum
+str_detect(words, '[aeiou]$') %>% mean
+# str_count() 返回匹配模式的个数
+str_count(words, '[aeiou]')
+
+# str_subset() 提取匹配模式的结果
+str_subset(words, '^t')
+
 # str_extract()
+colours <- c('red', 'orange', 'yellow', 'green', 'blue', 'purple')
+colours_mathch <- str_c(colours, collapse='|')
+
+
+
 shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
 str_extract(shopping_list, '\\d')
 str_extract(shopping_list, '[a-z]+')
@@ -272,6 +286,12 @@ ggplot(data=delays, mapping=aes(x=dist, y=delay))+geom_point(aes(size=count), al
 flight2 <- flights %>% select(year:day, hour, origin, dest, tailnum, carrier)
 flight2 %>% left_join(airlines, by='carrier')
 flight2 %>% left_join(airports, by=c('dest'='faa'))
+
+# filter join函数
+# semi_join(x, y)保留在y中可以匹配到的x观察项
+# anti_join(x, y)丢弃在y中可以匹配到的x观察项
+flights %>% semi_join(flights %>% count(dest, sort=T) %>% head(10), by='dest')
+flights %>% anti_join(planes %>% count(tailnum, sort=T) %>% head(10), by='tailnum')
 ```
 ## 数据合并
 merge(x, y, by = intersect(names(x), names(y)),
