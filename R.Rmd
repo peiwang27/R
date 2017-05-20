@@ -95,7 +95,8 @@ str_subset(words, '^t')
 
 # str_extract()
 colours <- c('red', 'orange', 'yellow', 'green', 'blue', 'purple')
-colours_mathch <- str_c(colours, collapse='|')
+colours_match <- str_c(colours, collapse='|')
+sentences %>% str_count(colours_match) %>% sum
 
 
 
