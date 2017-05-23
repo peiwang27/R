@@ -98,7 +98,10 @@ colours <- c('red', 'orange', 'yellow', 'green', 'blue', 'purple')
 colours_match <- str_c(colours, collapse='|')
 sentences %>% str_count(colours_match) %>% sum
 
-
+noun <- '(a|an|the) ([^ ]+)'
+sentences %>% str_subset(noun) %>% str_extract(noun)
+# str_match()以matrix的方式返回每个组的匹配结果
+sentences %>% str_subset(noun) %>% str_match(noun)
 
 shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
 str_extract(shopping_list, '\\d')
