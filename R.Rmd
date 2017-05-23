@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = T)
 # 加载的包及基本设置
 ```{r library}
 library(ggplot2)
-library(reshape2)
+library(reshape2) 
 library(magrittr)
 library(tidyverse)
 library(car)
@@ -353,6 +353,27 @@ list.filter(devs, 'r' %in% names(lang)) %>% str
 list.group(devs, age) %>% str # 互斥分组
 list.class(devs, interest) %>% str # 非互斥分组
 
+```
+
+# R语言时间数据----
+## lubridate函数
+```{r lubridate}
+library(lubridate)
+library(nycflights13)
+flights %>% select(year:day, hour, minute) %>%
+  mutate(departure=make_datetime(year, month, day, hour, minute))
+
+make_time_100 <- function(year, month, day, time){
+  make_datetime(year, month, day, time%/%100, time%%100)
+}
+
+flights_dt <- flights %>%
+  filter(!is.na(dest), !is.na(origin)) %>%
+  mutate(dep_time=make_time_100(year, month, day, dep_time),
+         arr_time=make_time_100(year, month, day, arr_time),
+         sched_dep_time=make_time_100(year, month, day, sched_dep_time),
+         sched_arr_time=make_time_100(year, month, day, sched_arr_time)) %>%
+  select(origin, dest, ends_with('delay'), ends_with('time'))
 ```
 
 # R语言绘图
