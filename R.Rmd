@@ -355,7 +355,7 @@ list.class(devs, interest) %>% str # 非互斥分组
 
 ```
 
-# R语言时间数据----
+# R语言时间数据
 ## lubridate函数
 ```{r lubridate}
 library(lubridate)
