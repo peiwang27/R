@@ -19,7 +19,7 @@ library(car)
 # 数据读取路径的设置
 ```{r}
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
-mac_path <- '2'
+mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 ```
 
