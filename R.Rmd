@@ -4,7 +4,7 @@ author: "machuan"
 date: "1/6/2017"
 output: word_document
 ---
-
+[TOC]
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
 ```
@@ -16,6 +16,13 @@ library(magrittr)
 library(tidyverse)
 library(car)
 ```
+# 数据读取路径的设置
+```{r}
+windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
+mac_path <- '2'
+data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+```
+
 # 数据的读取
 ## 数据核查使用
 ```{r}
