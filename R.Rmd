@@ -777,8 +777,10 @@ litter %>% group_by(dose) %>% summarise(mean=mean(weight))
 detach(litter)
 ```
 # 关联分析
-apriori(data, parameter = NULL, appearance = NULL, control = NULL)
-eclat(data, parameter = NULL, control = NULL)
+- apriori(data, parameter = NULL, appearance = NULL, control = NULL)
+  - parameter:设定support,confidence,maxlen,minlen,target='rules/frequent items'
+  - appearance:对先决条件（lhs）和关联结果（rhs）包含的项进行限制
+- eclat(data, parameter = NULL, control = NULL)
 ```{r arules arulesViz}
 library(arules)
 data("Groceries")
@@ -800,6 +802,7 @@ items_ecl <- eclat(Groceries, parameter = list(minlen=1, maxlen=3, support=0.001
 inspect(items_ecl[1:10])
 
 # 关联规则的可视化
+library(grid)
 library(arulesViz)
 plot(rules0)
 plot(rules0, interactive = T)
@@ -807,8 +810,32 @@ plot(rules0, shading = 'order', control = list(main='two-key plot'))
 ```
 
 # 聚类分析
+- k均值聚类：
+kmeans(x, centers, iter.max = 10, nstart = 1,
+       algorithm = c("Hartigan-Wong", "Lloyd", "Forgy",
+                     "MacQueen"), trace=FALSE)
+- k中心点：
+pam(x, k, diss = inherits(x, "dist"), metric = "euclidean",
+    medoids = NULL, stand = FALSE, cluster.only = FALSE,
+    do.swap = TRUE,
+    keep.diss = !diss && !cluster.only && n < 100,
+    keep.data = !diss && !cluster.only,
+    pamonce = FALSE, trace.lev = 0)
+- 密度聚类：
+dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
+    "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
 ```{r}
-data(Countries)
+country_path <- file.path(data_path, '数据挖掘_R语言实战/data/07/data.txt')
+countries <- read_table(country_path, col_names=F)
+names(countries) <- c('country', 'birth', 'death')
+countries %>% count(country) %>% filter(n>1)
+
+# 原始数据中FRANCE有两条，对此数据进行处理，删除FRANCE的数据
+countries <-  countries %>% filter(country != 'FRANCE')
+countries <- as.data.frame(countries)
+row.names(countries) <- countries$country
+plot(countries$birth, countries$death, xlab='birth', ylab='death', main='death verse birth')
+
 ```
 
 # 判别分析
