@@ -651,6 +651,80 @@ d3Sankey(Links = d3links, Nodes = d3nodes, Source = "source",
          fontsize = 12, nodeWidth = 30, file = "TestSankey.html") 
 ```
 
+## 迁徙图
+- REmap包
+```{r}
+library(REmap)
+data <- read.csv('cityvaluetop10.csv', header=T)
+
+theme1 <- get_theme(theme='Dark',
+                    lineColor = 'white',
+                    backgroundColor = 'white',
+                    titleColor = '#fff',
+                    borderColor = "blue", 
+                    regionColor = "grey",
+                    labelShow = T, 
+                    pointShow = F, 
+                    pointColor = "gold")
+
+remapH(data,
+       maptype = 'china',
+       theme = theme1,
+       blurSize = 70,
+       color = "red",
+       minAlpha = 100,
+       opacity = 1)
+```
+
+```{r}
+library(REmap)
+cityvalue <- read.csv('cityvalue.csv',header=T,encoding="gb2312")
+
+theme1 <- get_theme(theme = "none", 
+                    lineColor = "red",
+                    backgroundColor = "white", 
+                    titleColor = "#fff",
+                    borderColor = "white", 
+                    regionColor = "grey",
+                    labelShow = F, 
+                    pointShow = F, 
+                    pointColor = "gold"
+                    )
+#此处手动填入前10城市数据，作线条用，并设置颜色为red
+markline_data <- data.frame(origin=rep("广州",10),
+         destination=c("广西","湖南","湖北","贵州",
+"河南","江西","福建","北京",
+"浙江","四川"),
+         color=rep("red",10)
+         )
+
+#此处设置前10城市数据，作点用，并设置颜色为grey
+markpoint_data <- data.frame(point=c("广西","湖南","湖北","贵州","河南","江西","福建","北京","浙江","四川"),color=rep("white",10))
+markline_control <- markLineControl(symbolSize=c(0,0),
+                                    smooth=F,
+                                    smoothness=0,
+                                    effect=F,
+                                    lineWidth=1,
+                                    lineType="solid"
+                                    )
+markpoint_control <- markPointControl(symbol = 'Circle',
+                                      symbolSize = 10,
+                                      effect = T,
+                                      effectType = 'scale'
+                                      )
+remapC(cityvalue,
+       maptype = 'china',
+       markLineData = markline_data,
+       markPointData = markpoint_data,
+       color = c('#888888','#CDCDCD'),
+       theme = theme1,
+       title = "",
+       subtitle = "",
+       markLineTheme = markline_control,
+       markPointTheme = markpoint_control
+       )
+```
+
 
 # 基本统计分析
 ## 描述性统计
@@ -824,7 +898,7 @@ pam(x, k, diss = inherits(x, "dist"), metric = "euclidean",
 - 密度聚类：
 dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
     "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
-```{r}
+```{r countries data}
 country_path <- file.path(data_path, '数据挖掘_R语言实战/data/07/data.txt')
 countries <- read_table(country_path, col_names=F)
 names(countries) <- c('country', 'birth', 'death')
@@ -835,7 +909,31 @@ countries <-  countries %>% filter(country != 'FRANCE')
 countries <- as.data.frame(countries)
 row.names(countries) <- countries$country
 plot(countries$birth, countries$death, xlab='birth', ylab='death', main='death verse birth')
+```
 
+
+```{r kmeans}
+# K均值聚类
+fit_km1 <- kmeans(countries[, -1], centers=3)
+print(fit_km1)
+
+# 判断分多少类是最优的
+result <- rep(0, 67)
+for(k in 1:67){
+  fit_km <- kmeans(countries[, -1], centers=k)
+  result[k] <- fit_km$betweenss/fit_km$totss
+}
+round(result, 2)
+
+fit_km2 <- kmeans(countries[, -1], centers=10)
+print(fit_km2)
+```
+
+
+```{r pam}
+library(cluster)
+fit_pam1 <- pam(countries[, -1], k=3)
+print(fit_pam1)
 ```
 
 # 判别分析
