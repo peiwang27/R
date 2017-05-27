@@ -4,7 +4,6 @@ author: "machuan"
 date: "1/6/2017"
 output: word_document
 ---
-[TOC]
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
 ```
@@ -898,6 +897,8 @@ pam(x, k, diss = inherits(x, "dist"), metric = "euclidean",
 - 密度聚类：
 dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
     "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
+    
+## 数据准备
 ```{r countries data}
 country_path <- file.path(data_path, '数据挖掘_R语言实战/data/07/data.txt')
 countries <- read_table(country_path, col_names=F)
@@ -912,6 +913,7 @@ plot(countries$birth, countries$death, xlab='birth', ylab='death', main='death v
 ```
 
 
+## k均值聚类
 ```{r kmeans}
 # K均值聚类
 fit_km1 <- kmeans(countries[, -1], centers=3)
@@ -930,10 +932,36 @@ print(fit_km2)
 ```
 
 
+## k中心聚类
 ```{r pam}
+# k中心聚类
 library(cluster)
 fit_pam1 <- pam(countries[, -1], k=3)
 print(fit_pam1)
+```
+
+
+## 系谱聚类
+```{r hclust}
+fit_hc1 <- hclust(dist(countries[, -1]))
+print(fit_hc1)
+plot(fit_hc1)
+
+group_k3 <- cutree(fit_hc1, k=3)
+print(group_k3)
+sapply(unique(group_k3), function(g) countries$country[group_k3==g])
+
+
+group_h18 <- cutree(fit_hc1, h=18)
+print(group_h18)
+sapply(unique(group_h18), function(g) countries$country[group_h18==g])
+```
+
+
+## 密度聚类
+```{r dbscan}
+library(fpc)
+
 ```
 
 # 判别分析
