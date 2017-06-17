@@ -9,6 +9,11 @@ library(lubridate)
 library(XML)
 #library(RSQLite)
 library(zoo)
+library(reshape2)
+library(maps)
+library(RColorBrewer)
+library(choroplethr)
+library(data.table)
 
 #设置路径
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
@@ -76,3 +81,33 @@ clean_numeric <- function(s){
   )
 }
 hist(finviz$Price[finviz$Price<150], breaks=100, xla='Price')
+
+sector_avg_price <- finviz %>%
+  group_by(Sector) %>%
+  summarise(sector_avg_price=mean(Price))
+
+sector_avg_price %>%
+  ggplot(aes(Sector, sector_avg_price)) +
+  geom_bar(stat='identity') +
+  labs(x='sector', y='sector_avg_price', title='Sector Avg Price') +
+  theme(axis.text = element_text(angle = 45, hjust = 1))
+
+
+sector_avg <- finviz %>%
+  melt(id='Sector', variable.name='variable') %>%
+  filter(variable %in% c('Price',
+                         'P/E',
+                         'PEG',
+                         'P/S',
+                         'P/B')) %>%
+  filter(!is.na(value))
+
+
+# ch05 就业数据的可视化
+setwd(ch_data_path[5])
+
+#ann2012 <- read_csv(unz('2012_annual_singlefile.zip',
+#                        '2012.annual.singlefile.csv'))
+# 此处使用fread的速度相对较快，但是需要手动解压缩
+ann2012 <- fread('2012.annual.singlefile.csv')
+# 暂时缺少需要下载的数据
