@@ -14,6 +14,7 @@ library(maps)
 library(RColorBrewer)
 library(choroplethr)
 library(data.table)
+library(bit64)
 
 #设置路径
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
@@ -65,7 +66,7 @@ mpgByYr_gas %>%
   labs(x='year', y='avgMPG', title='gas cars', subtitle='just for fun')
 
 # ch03 模拟美式橄榄球比赛数据---------------------------------------
-# 缺少安装SQLite包
+# 缺少安装RSQLite包
 
 # ch04 分析股票市场数据---------------------------------------------
 setwd(ch_data_path[4])
@@ -109,5 +110,29 @@ setwd(ch_data_path[5])
 #ann2012 <- read_csv(unz('2012_annual_singlefile.zip',
 #                        '2012.annual.singlefile.csv'))
 # 此处使用fread的速度相对较快，但是需要手动解压缩
+# 对于文件中存在特别大的数字，需要library(bit64)
 ann2012 <- fread('2012.annual.singlefile.csv')
-# 暂时缺少需要下载的数据
+
+for(u in c('agglevel', 'area', 'industry', 'ownership', 'size')){
+  assign(u, read.csv(paste(u, '_titles.csv', sep=''),
+                     header = T,
+                     stringsAsFactors = F))
+}
+
+code = c('agglevel', 'industry', 'ownership', 'size')
+ann2012_full <- ann2012
+for(i in 1:length(code)){
+  # text=<string>参数不可省略...
+  eval(parse(text=paste('ann2012_full <- left_join(ann2012_full,',
+                        code[i],')',
+                        sep='')))
+}
+
+area$area_fips <- str_to_title(area$area_fips)
+data("county.fips")
+data("state.fips")
+county.fips$fips <- str_pad(county.fips$fips, width = 5, pad = 0)
+county.fips$county <- sapply(
+  gsub('[a-z\ ]+,([a-z\ ]+)', '\\1', county.fips$polyname),
+  simpleCap
+)
