@@ -104,7 +104,7 @@ sector_avg <- finviz %>%
   filter(!is.na(value))
 
 
-# ch05 就业数据的可视化
+# ch05 就业数据的可视化---------------------------------------------
 setwd(ch_data_path[5])
 
 #ann2012 <- read_csv(unz('2012_annual_singlefile.zip',
@@ -153,3 +153,27 @@ myarea <- merge(myarea, mystatefips,
 
 ann2012_full <- left_join(ann2012_full, myarea) %>%
   filter(state %in% lower48)
+
+glimpse(ann2012_full)
+
+d.state <- ann2012_full %>%
+  filter(agglvl_code==50) %>%
+  select(state, avg_annual_pay, annual_avg_emplvl)
+d.state$wage <- cut(d.state$avg_annual_pay,
+                    quantile(d.state$avg_annual_pay,
+                             c(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1)))
+d.state$empquantile <- cut(d.state$annual_avg_emplvl,
+                           quantile(d.state$annual_avg_emplvl,
+                                    c(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
+
+x1 <- quantile(d.state$avg_annual_pay,
+              c(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
+xx1 <- paste(round(x1/1000), 'K', sep='')
+labs1 <- paste(xx1[-length(xx1)], xx1[-1], sep='-')
+levels(d.state$wage) <- labs1
+
+x2 <- quantile(d.state$annual_avg_emplvl,
+               c(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
+xx2 <- ifelse(x2>1000, paste(round(x2/1000), 'K', sep=''), round(x2))
+labs2 <- paste(xx2[-length(xx2)], xx2[-1], sep='-')
+levels(d.state$empquantile) <- labs2
