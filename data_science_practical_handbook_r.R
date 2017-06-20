@@ -7,7 +7,7 @@ library(tidyverse)
 library(stringr)
 library(lubridate)
 library(XML)
-library(RSQLite)
+#library(RSQLite)
 library(zoo)
 library(reshape2)
 library(maps)
@@ -130,9 +130,26 @@ for(i in 1:length(code)){
 
 area$area_fips <- str_to_title(area$area_fips)
 data("county.fips")
-data("state.fips")
 county.fips$fips <- str_pad(county.fips$fips, width = 5, pad = 0)
-county.fips$county <- sapply(
-  gsub('[a-z\ ]+,([a-z\ ]+)', '\\1', county.fips$polyname),
-  simpleCap
-)
+county.fips$county <-
+  str_replace(county.fips$polyname, '[a-z\ ]+,([a-z\ ]+)','\\1')
+county.fips$county <- str_to_title(county.fips$county)
+
+data(state.fips)
+state.fips$fips <- str_pad(state.fips$fips,
+                           width=2, pad='0', side='left')
+state.fips$state <-
+  str_replace(state.fips$polyname, "([a-z\ ]+):[a-z\ \\']+", '\\1')
+state.fips$state <- str_to_title(state.fips$state)
+mystatefips <- unique(state.fips[, c('fips', 'abb', 'state')])
+lower48 <- setdiff(unique(state.fips$state), c('Hawaii', 'Alaska'))
+myarea <- merge(area, county.fips,
+                by.x='area_fips', by.y='fips',
+                all.x =T)
+myarea$state_fips <- substr(myarea$area_fips, 1, 2)
+myarea <- merge(myarea, mystatefips,
+                by.x='state_fips', by.y='fips',
+                all.x = T)
+
+ann2012_full <- left_join(ann2012_full, myarea) %>%
+  filter(state %in% lower48)
