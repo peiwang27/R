@@ -177,3 +177,22 @@ x2 <- quantile(d.state$annual_avg_emplvl,
 xx2 <- ifelse(x2>1000, paste(round(x2/1000), 'K', sep=''), round(x2))
 labs2 <- paste(xx2[-length(xx2)], xx2[-1], sep='-')
 levels(d.state$empquantile) <- labs2
+
+
+Discretize <- function(x, breaks=NULL){
+  if(is.null(breaks)){
+    breaks <- quantile(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1)
+    if(sum(breaks==0)>1){
+      temp <- which(breaks==0, arr.ind = T)
+      breaks <- breaks[max(temp):length(breaks)]
+    }
+  }
+  x.discrete <- cut(x, breaks, include.lowest = T)
+  breaks.eng <- ifelse(breaks>1000,
+                       paste0(round(breaks/1000), 'K', sep=''),
+                       round(breaks))
+  Labs <- paste(breaks.eng[-length(breaks.eng)], breaks.eng[-1], sep='-')
+  levels(x.discrete) <- Labs
+  return(x.discrete)
+}
+
