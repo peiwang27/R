@@ -196,3 +196,61 @@ Discretize <- function(x, breaks=NULL){
   return(x.discrete)
 }
 
+
+d.county <- ann2012_full %>%
+  filter(agglvl_code==70) %>%
+  select(state, county, abb, avg_annual_pay, annual_avg_emplvl) %>%
+  mutate(wage = Discretize(avg_annual_pay),
+         empquantile = Discretize(annual_avg_emplvl))
+
+state_df <- map_data('state') %>%
+  mutate(state = str_to_title(region),
+         county = str_to_title(subregion))
+county_df <- map_data('county')  %>%
+  mutate(state = str_to_title(region),
+         county = str_to_title(subregion))
+
+chor_state <- left_join(state_df, d.state, by='state')
+ggplot(chor_state, aes(long, lat, group=group)) +
+  geom_polygon(aes(fill=wage)) +
+  geom_path(color='black', size=0.2) +
+  scale_fill_brewer(palette = 'PuRd') +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank())
+
+chor_county <- left_join(county_df, d.county, by='county')
+ggplot(chor_county, aes(long, lat, group=group)) +
+  geom_polygon(aes(fill=wage)) +
+  geom_path(color='black', size=0.2) +
+  scale_fill_brewer(palette = 'PuRd') +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank())
+
+
+d.sectors <- ann2012_full %>%
+  filter(industry_code %in% c(11,21,54,52),
+         own_code==5,
+         agglvl_code==74) %>%
+  select(state, county, industry_code, own_code, agglvl_code,
+         industry_title, own_title, avg_annual_pay,
+         annual_avg_emplvl) %>%
+  mutate(wage=Discretize(avg_annual_pay),
+         emplevel=Discretize(annual_avg_emplvl)) %>%
+  filter(!is.na(industry_code))
+
+chor_sector <- left_join(county_df, d.sectors, by='county')
+ggplot(chor_sector, aes(long, lat, group=group)) +
+  geom_polygon(aes(fill=emplevel)) +
+  geom_polygon(data=state_df, color='black', fill=NA) +
+  scale_fill_brewer(palette='PuRd') +
+  facet_wrap(~industry_title, ncol=2, as.table = T) +
+  labs(fill='Avg Employment Level', x='', y='') +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank())
+
