@@ -22,7 +22,7 @@ mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 ```
 
-# 数据的读取
+# 数据的输入输出
 ## 数据核查使用
 ```{r}
 # 检查数据是否包含字符窜、以及是否全部为空
@@ -39,6 +39,12 @@ check_is.na <- function(x){
 apply(Insurance, 1, check_in)>0
 apply(Insurance, 1, check_is.na)
 ```
+
+## excel文件的输出
+oldOpt <- options()
+options(xlsx.date.format='yyyy-MM-dd')
+write.xlsx(x, file_name, sheetName='sheetName', col.names=T, row.names=F)
+options(oldOpt)
 
 ## excel文件的读取
 - RODBC包
@@ -250,11 +256,9 @@ who %>% gather(5:60, key='key', value='cases', na.rm=T) %>% mutate(key=stringr::
 函数split()可以按照分组因子，把向量，矩阵和数据框进行适当的分组,它的返回值是一个列表，代表分组变量每个水平的观测。这个列表可以使用sapply(), lappy()进行处理（apply – combine步骤），得到问题的最终结果。
 ```{r plyr}
 library(plyr)
-library(MASS)
-data(Cars93)
-head(Cars93)
-g <- split(Cars93$Price, Cars93$Origin)
-sapply(g, sum)
+head(iris)
+ddply(iris, .(Species), function(x) colMeans(x[, -5]))
+iris_mean <- adply(iris3, 3, colMeans)
 ```
 ## dplyr包
 ```{r dplyr}
