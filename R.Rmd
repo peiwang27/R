@@ -22,7 +22,7 @@ mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 ```
 
-# 数据的读取
+# 数据的输入输出
 ## 数据核查使用
 ```{r}
 # 检查数据是否包含字符窜、以及是否全部为空
@@ -39,6 +39,12 @@ check_is.na <- function(x){
 apply(Insurance, 1, check_in)>0
 apply(Insurance, 1, check_is.na)
 ```
+
+## excel文件的输出
+oldOpt <- options()
+options(xlsx.date.format='yyyy-MM-dd')
+write.xlsx(x, file_name, sheetName='sheetName', col.names=T, row.names=F)
+options(oldOpt)
 
 ## excel文件的读取
 - RODBC包
