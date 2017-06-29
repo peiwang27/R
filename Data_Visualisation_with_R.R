@@ -18,7 +18,8 @@ ggplot(economics, aes(x=date, y=unemploy))+geom_line()
 # 条形图 ----
 # barplot()函数
 data("VADeaths")
-barplot(VADeaths, beside=T, col=c('green', 'red', 'blue', 'black', 'yellow'),
+barplot(VADeaths, beside=T,
+        col=c('green', 'red', 'blue', 'black', 'yellow'),
         legend=row.names(VADeaths), ylim=c(0, 100))
 # geom_bar()函数
 data(mpg)
@@ -33,7 +34,8 @@ ggplot(VADeaths_melt, aes(x=Var2, y=value, fill=Var1))+
 ggplot(VADeaths_melt, aes(x=Var2, y=value, fill=Var1))+
   geom_bar(stat='identity', position='fill')
 # 面积图 ----
-# polygon()函数,存在比较明显的缺点，设置顺序出现问题，容易造成图层的叠加和遮挡
+# polygon()函数,存在比较明显的缺点，设置顺序出现问题
+# 容易造成图层的叠加和遮挡
 data(diamonds)
 d <- density(diamonds[diamonds$cut=='Ideal',]$price)
 plot(d, xlab='price', main='')
@@ -84,7 +86,9 @@ x2 <- mtcars$mpg[mtcars$cyl==4]
 x3 <- mtcars$mpg[mtcars$cyl==8]
 vioplot(x1, x2, x3, names=c('6 cyl', '4 cyl', '8 cyl'), col='gold')
 # geom_violin()函数
-ggplot(mtcars, aes(x=factor(cyl), y=mpg))+geom_violin()+geom_boxplot(width=0.1)
+ggplot(mtcars, aes(x=factor(cyl), y=mpg))+
+  geom_violin()+
+  geom_boxplot(width=0.1)
 # Cleveland点图 ----
 # dotchart()函数
 data(mtcars)
@@ -92,7 +96,8 @@ dotchart(mtcars$mpg, labels=row.names(mtcars), cex=0.7,
          main='Gas Milage for Car Models',
          xlab='mpg')
 # geom_dotplot()函数
-ggplot(mtcars, aes(x=mpg, y=row.names(mtcars), fill=row.names(mtcars)))+
+ggplot(mtcars,
+       aes(x=mpg, y=row.names(mtcars), fill=row.names(mtcars)))+
   geom_dotplot(binaxis = 'y',
                stackgroups = T,
                binwidth = 1,
