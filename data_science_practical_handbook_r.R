@@ -197,10 +197,7 @@ Discretize <- function(x, breaks=NULL){
   return(x.discrete)
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f09435d41dc6d20c8800ac8dcbe575e56d7d82c3
 d.county <- ann2012_full %>%
   filter(agglvl_code==70) %>%
   select(state, county, abb, avg_annual_pay, annual_avg_emplvl) %>%

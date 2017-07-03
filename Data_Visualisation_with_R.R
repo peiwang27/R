@@ -1,6 +1,8 @@
 # R语言绘图查询 - ggplot2 & Graphic
+library(tidyverse)
 library(ggplot2)
 library(reshape2)
+library(maps)
 # 散点图 ----
 # points()函数
 plot(rnorm(200), rnorm(200), type='p', col='red')
