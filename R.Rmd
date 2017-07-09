@@ -83,8 +83,11 @@ hospital_spending <- select(hospital_spending, -c(sid:meta))
 ```
 - rjson
 ```{r rjosn}
+library(rjson)
+grades <- fromJSON('grades.json')
+
 head(mtcars)
-jsoncars <- toJSON(mtcars, pretty = T)
+jsoncars <- toJSON(mtcars)
 fromJSON(jsoncars)
 ```
 
