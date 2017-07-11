@@ -13,10 +13,10 @@ data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter3/data'))
-saledata <- read.csv('catering_sale.csv',
-                     header = T,
-                     stringsAsFactors = F,
-                     na.strings = '')
+saledata <- fread('catering_sale.csv',
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = '')
 str(saledata)
 dim(saledata)
 length(unique(saledata$日期))
