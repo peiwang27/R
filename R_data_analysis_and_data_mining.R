@@ -54,3 +54,5 @@ summary(bankloan_glm)
 logit.setp1 <- step(bankloan_glm, direction = 'both')
 logit.setp2 <- step(bankloan_glm, direction = 'forward')
 logit.step3 <- step(bankloan_glm, direction = 'backward')
+
+
