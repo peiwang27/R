@@ -17,6 +17,7 @@ import_csv_data <- function(x){
                     header = T,
                     stringsAsFactors = F,
                     na.strings = ''))
+    return(u)
   }
 }
 
@@ -64,4 +65,3 @@ logit.setp1 <- step(bankloan_glm, direction = 'both')
 logit.setp2 <- step(bankloan_glm, direction = 'forward')
 logit.step3 <- step(bankloan_glm, direction = 'backward')
 import_csv_data(dir())
-
