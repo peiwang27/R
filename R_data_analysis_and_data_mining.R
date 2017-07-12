@@ -10,6 +10,15 @@ windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
+import_csv_data <- function(x){
+  x <- x %>% str_subset('csv') %>% str_replace('.csv', '')
+  for(u in x){
+    assign(u, fread(paste(u, '.csv', sep = ''),
+                    header = T,
+                    stringsAsFactors = F,
+                    na.strings = ''))
+  }
+}
 
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter3/data'))
@@ -54,5 +63,5 @@ summary(bankloan_glm)
 logit.setp1 <- step(bankloan_glm, direction = 'both')
 logit.setp2 <- step(bankloan_glm, direction = 'forward')
 logit.step3 <- step(bankloan_glm, direction = 'backward')
-
+import_csv_data(dir())
 
