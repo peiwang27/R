@@ -205,6 +205,7 @@ data(mtcars)
 attach(mtcars)
 aggregate(mtcars, by=list(cyl=cyl, vs=vs), mean, drop = F)
 aggregate(cbind(mpg, hp)~cyl+gear, data=mtcars, FUN=mean)
+detach(mtcars)
 ```
 ## reshape2包
 ```{r reshape2}
