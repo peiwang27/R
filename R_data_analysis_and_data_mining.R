@@ -10,17 +10,6 @@ windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
-import_csv_data <- function(x){
-  x <- x %>% str_subset('csv') %>% str_replace('.csv', '')
-  for(u in x){
-    assign(u, fread(paste(u, '.csv', sep = ''),
-                    header = T,
-                    stringsAsFactors = F,
-                    na.strings = ''))
-    return(u)
-  }
-}
-
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter3/data'))
 saledata <- fread('catering_sale.csv',
@@ -52,8 +41,13 @@ axis(4, col='red', col.axis='red', at=0:10000, label=c(0:10000/10000))
 
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter5/data'))
-bankloan <- fread('bankloan.csv', header = T, stringsAsFactors = F,
-                  na.strings = '')
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = '',
+                  encoding = 'UTF-8'))
+}
 bankloan_train_data <- bankloan
 names(bankloan_train_data) <- c(paste('x', 1:8, sep=''), 'y')
 bankloan_glm <- glm(y~x1+x2+x3+x4+x5+x6+x7+x8,
@@ -64,4 +58,3 @@ summary(bankloan_glm)
 logit.setp1 <- step(bankloan_glm, direction = 'both')
 logit.setp2 <- step(bankloan_glm, direction = 'forward')
 logit.step3 <- step(bankloan_glm, direction = 'backward')
-import_csv_data(dir())
