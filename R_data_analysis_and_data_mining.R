@@ -58,3 +58,17 @@ summary(bankloan_glm)
 logit.setp1 <- step(bankloan_glm, direction = 'both')
 logit.setp2 <- step(bankloan_glm, direction = 'forward')
 logit.step3 <- step(bankloan_glm, direction = 'backward')
+
+km <- kmeans(consumption_data, centers = 3)
+print(km)
+consumption_data_group <- cbind(consumption_data, km$cluster)
+
+
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter6/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
