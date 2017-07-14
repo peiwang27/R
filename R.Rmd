@@ -596,6 +596,12 @@ hv <- heatmap(x, col=cm.colors(256),
               RowSideColors = rc,
               ColSideColors = cc)
 ```
+## 星状图、网状图、雷达图
+```{r}
+stars(head(mtcars), draw.segments = T)
+help(stars)
+```
+
 ## 桑基图
 - riverplot
 ```{r riverplot}

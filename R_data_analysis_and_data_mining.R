@@ -10,6 +10,7 @@ windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
+# chapter3---------------------------------------------------------
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter3/data'))
 saledata <- fread('catering_sale.csv',
@@ -39,7 +40,7 @@ par(new=T, mar=c(4,4,4,4))
 points(c(1:length(accratio)-0.5), accratio*10000, type='b')
 axis(4, col='red', col.axis='red', at=0:10000, label=c(0:10000/10000))
 
-
+# chapter5---------------------------------------------------------
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter5/data'))
 for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
@@ -64,7 +65,7 @@ km <- kmeans(consumption_data, centers = 3)
 print(km)
 consumption_data_group <- cbind(consumption_data, km$cluster)
 
-
+# chapter6---------------------------------------------------------
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter6/data'))
 for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
@@ -73,3 +74,83 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   stringsAsFactors = F,
                   na.strings = ''))
 }
+
+trainData$class <- as.factor(trainData$class)
+library(nnet)
+nnet.model <- nnet(class~ele_ind+loss_ind+alarm_ind,
+                   trainData,
+                   size=10, decay=0.05)
+summary(nnet.model)
+confusion <- table(trainData$class,
+                   predict(nnet.model, trainData, type='class'))
+accuracy <- sum(diag(confusion))/sum(confusion)
+
+library(tree)
+tree.model <- tree(class~ele_ind+loss_ind+alarm_ind, trainData)
+summary(tree.model)
+plot(tree.model)
+text(tree.model)
+consufion <- table(trainData$class,
+                   predict(tree.model, trainData, type='class'))
+accuracy <- sum(diag(confusion))/sum(confusion)
+
+
+# chapter7---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter7/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
+
+clean_air_data <- air_data %>%
+  select(15:18, 20:29) %>%
+  filter(!is.na(SUM_YR_1), !is.na(SUM_YR_2)) %>%
+  filter(!((SUM_YR_1==0|SUM_YR_2==0)&(avg_discount!=0)&(SEG_KM_SUM>0)))
+
+sub_air_data <- air_data %>%
+  filter(!is.na(SUM_YR_1), !is.na(SUM_YR_2)) %>%
+  filter(!((SUM_YR_1==0|SUM_YR_2==0)&
+             (avg_discount!=0)&
+             (SEG_KM_SUM>0))) %>%
+  select(LOAD_TIME, FFP_DATE, LAST_TO_END,
+         FLIGHT_COUNT, SEG_KM_SUM, avg_discount) %>%
+  mutate(LOAD_TIME=ymd(LOAD_TIME),
+         FFP_DATE=ymd(FFP_DATE),
+         L=as.numeric((LOAD_TIME-FFP_DATE)/30),
+         R=LAST_TO_END,
+         F_=FLIGHT_COUNT,
+         M=SEG_KM_SUM,
+         C=avg_discount) %>%
+  select(L, R, F_, M, C)
+
+result <- kmeans(zscoreddata[, -1], centers = 5)
+stars(result$centers, draw.segments = T, key.loc = c(0, 5))
+
+
+# chapter8---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter8/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
+names(data_)
+names(processedfile)
+dis_con <- function(x, char){
+  temp <- kmeans(x, 4, nstart=20)
+  temp_sym <- paste(temp$cluster, char, sep='')
+  return(temp_sym)
+}
+model_data <- data_ %>%
+  mutate(x1=dis_con(肝气郁结证型系数, 'A'),
+         x2=dis_con(热毒蕴结证型系数, 'B'),
+         x3=dis_con(冲任失调证型系数, 'C'),
+         x4=dis_con(气血两虚证型系数, 'D'),
+         x5=dis_con(脾胃虚弱证型系数, 'E'),
+         x6=dis_con(肝肾阴虚证型系数, 'F')) %>%
+  select(x1,x2,x3,x4,x5,x6,TNM分期)
