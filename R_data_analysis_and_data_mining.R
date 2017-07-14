@@ -15,7 +15,8 @@ setwd(file.path(data_path,
 saledata <- fread('catering_sale.csv',
                   header = T,
                   stringsAsFactors = F,
-                  na.strings = '')
+                  na.strings = '',
+                  encoding = 'unknown')
 str(saledata)
 dim(saledata)
 length(unique(saledata$日期))
