@@ -9,6 +9,7 @@ library(data.table)
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+csv_encoding <- ifelse(Sys.info()[1]=='Windows', 'UTF-8', 'gb')
 
 # chapter3---------------------------------------------------------
 setwd(file.path(data_path,
@@ -17,7 +18,7 @@ saledata <- fread('catering_sale.csv',
                   header = T,
                   stringsAsFactors = F,
                   na.strings = '',
-                  encoding = 'unknown')
+                  encoding = 'UTF-8')
 str(saledata)
 dim(saledata)
 length(unique(saledata$日期))
@@ -154,3 +155,20 @@ model_data <- data_ %>%
          x5=dis_con(脾胃虚弱证型系数, 'E'),
          x6=dis_con(肝肾阴虚证型系数, 'F')) %>%
   select(x1,x2,x3,x4,x5,x6,TNM分期)
+
+library(arules)
+processedfile <- apply(processedfile, 2, as.factor) %>% as.data.frame()
+trans <- as(processedfile, 'transactions')
+rules <- apriori(trans,
+                 parameter = list(support=0.06, confidence=0.75))
+
+
+# chapter9---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter9/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
