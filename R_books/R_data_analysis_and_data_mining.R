@@ -171,3 +171,28 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   stringsAsFactors = F,
                   na.strings = ''))
 }
+names(moment) <- c('class', 'id',
+                   paste(rep(c('R','G','B'),3),
+                         rep(c(1,2,3), each=3), sep=''))
+
+library(e1071)
+trainData <- transform(trainData, class=as.factor(class))
+testData <- transform(testData, class=as.factor(class))
+svm.model <- svm(class~., data=trainData[, -2])
+confusion <- table(trainData$class,
+                   predict(svm.model, trainData, type='class'))
+accuracy <- sum(diag(confusion))/sum(confusion)
+
+# chapter10---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter10/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
+row.names(water_heater) <- water_heater$发生时间
+model.water_heater <- water_heater %>%
+  mutate(发生时间=ymd_hms(发生时间)) %>%
+  filter(水流量!=0)
