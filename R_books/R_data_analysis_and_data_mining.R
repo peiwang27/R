@@ -192,7 +192,38 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   stringsAsFactors = F,
                   na.strings = ''))
 }
-row.names(water_heater) <- water_heater$发生时间
+water_heater$event_num <- as.numeric(row.names(water_heater))
 model.water_heater <- water_heater %>%
   mutate(发生时间=ymd_hms(发生时间)) %>%
-  filter(水流量!=0)
+  filter(水流量!=0) %>%
+  mutate(fdiff=发生时间-lead(发生时间, 1),
+         bdiff=发生时间-lag(发生时间, 1)) %>%
+  filter(!is.na(bdiff), !is.na(fdiff)) %>%
+  mutate(headornot=ifelse(abs(fdiff)>240, 1, 0),
+         endornot=ifelse(abs(bdiff)>240, 1, 0)) %>%
+  filter((headornot!=0)|(endornot!=0)) %>%
+  select(event_num, headornot, endornot) %>%
+  mutate(head_seq=ifelse(headornot==0, 0, event_num),
+         end_seq=ifelse(endornot==0, 0, event_num))
+
+event_seq <- cbind(
+  model.water_heater %>%
+    select(head_seq) %>%
+    filter(head_seq!=0),
+  model.water_heater %>%
+    select(end_seq) %>%
+    filter(end_seq!=0)
+)
+
+event_data <- cbind(1:dim(event_seq)[1], event_seq)
+names(event_data) <- c('事件序号', '事件起始编号', '事件结束编号')
+# chapter11---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter11/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
+
