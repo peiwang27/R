@@ -202,21 +202,66 @@ model.water_heater <- water_heater %>%
   mutate(headornot=ifelse(abs(fdiff)>240, 1, 0),
          endornot=ifelse(abs(bdiff)>240, 1, 0)) %>%
   filter((headornot!=0)|(endornot!=0)) %>%
-  select(event_num, headornot, endornot) %>%
   mutate(head_seq=ifelse(headornot==0, 0, event_num),
          end_seq=ifelse(endornot==0, 0, event_num))
 
 event_seq <- cbind(
-  model.water_heater %>%
-    select(head_seq) %>%
-    filter(head_seq!=0),
-  model.water_heater %>%
-    select(end_seq) %>%
-    filter(end_seq!=0)
-)
+  model.water_heater %>% select(head_seq) %>% filter(head_seq!=0),
+  model.water_heater %>% select(end_seq) %>% filter(end_seq!=0))
 
 event_data <- cbind(1:dim(event_seq)[1], event_seq)
 names(event_data) <- c('事件序号', '事件起始编号', '事件结束编号')
+
+devide_event <- function(df, thresh_hold){
+  model.water_heater <- df %>%
+    mutate(发生时间=ymd_hms(发生时间)) %>%
+    filter(水流量!=0) %>%
+    mutate(fdiff=发生时间-lead(发生时间, 1),
+           bdiff=发生时间-lag(发生时间, 1)) %>%
+    filter(!is.na(bdiff), !is.na(fdiff)) %>%
+    mutate(headornot=ifelse(abs(fdiff)/60>thresh_hold, 1, 0),
+           endornot=ifelse(abs(bdiff)/60>thresh_hold, 1, 0)) %>%
+    filter((headornot!=0)|(endornot!=0)) %>%
+    select(event_num, headornot, endornot) %>%
+    mutate(head_seq=ifelse(headornot==0, 0, event_num),
+           end_seq=ifelse(endornot==0, 0, event_num))
+  
+  event_seq <- cbind(
+    model.water_heater %>% select(head_seq) %>% filter(head_seq!=0),
+    model.water_heater %>% select(end_seq) %>% filter(end_seq!=0))
+  
+  event_data <- cbind(1:dim(event_seq)[1], event_seq)
+  names(event_data) <- c('事件序号', '事件起始编号', '事件结束编号')
+  return(dim(event_data)[1])
+}
+devide_time <- seq(2, 8, by=0.25)
+devide_result <- cbind(
+  devide_time,
+  sapply(devide_time, function(x) devide_event(water_heater, x))
+) %>% as.data.frame()
+names(devide_result) <- c('devide_time', 'event_num')
+
+sub_df <- function(df, x){
+  index <- which(df[, 1]==x)
+  return(df[index:(index+4), ])
+}
+
+calc_a <- function(df){
+  a <- rep(0, 4)
+  for(i in 2:5){
+    a[i] <- abs((df[i,2]-df[1,2])/(df[i,1]-df[1,1]))
+  }
+  return(mean(a))
+}
+
+calc_a_result <- cbind(
+  lag(devide_result$devide_time,
+      4)[!is.na(lag(devide_result$devide_time, 4))],
+  sapply(
+    lag(devide_result$devide_time,
+        4)[!is.na(lag(devide_result$devide_time, 4))],
+    function(x) calc_a(sub_df(devide_result, x))))
+
 # chapter11---------------------------------------------------------
 setwd(file.path(data_path,
                 'R语言数据分析与挖掘实战/数据及代码/chapter11/data'))
