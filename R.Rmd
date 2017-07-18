@@ -212,8 +212,9 @@ detach(mtcars)
 data("airquality")
 head(airquality)
 aqm <- melt(airquality, id=c('Month', 'Day'), measure.vars=c('Wind', 'Temp'))
-dcast(aqm, Day~Month+variable)
-dcast(aqm, Month~variable, sum)
+head(aqm)
+dcast(aqm, Day~Month+variable) %>% head
+dcast(aqm, Month~variable, sum) %>% head
 ```
 ## tidyr包
 ```{r tidyr}

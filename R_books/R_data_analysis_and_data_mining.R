@@ -5,6 +5,7 @@ library(stringr)
 library(jsonlite)
 library(lubridate)
 library(data.table)
+library(tidyr)
 
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
@@ -271,4 +272,17 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   stringsAsFactors = F,
                   na.strings = ''))
 }
+
+disc_attr_data <- discdata %>%
+  filter(DESCRIPTION=='磁盘容量')
+disc_attr_data <-
+  disc_attr_data[!duplicated(disc_attr_data$ENTITY), ]
+
+disc_usage_data <- discdata %>%
+  filter(DESCRIPTION=='磁盘已使用大小') %>%
+  select(SYS_NAME, ENTITY, VALUE, COLLECTTIME) %>%
+  spread(key='ENTITY', value='VALUE')
+names(disc_usage_data) <- c('sys_name', 'coll_time', 'cwc', 'cwd')
+names(discdata_processed) <- c('sys_name', 'coll_time', 'cwc', 'cwd')
+
 
