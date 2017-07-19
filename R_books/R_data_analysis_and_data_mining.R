@@ -6,6 +6,9 @@ library(jsonlite)
 library(lubridate)
 library(data.table)
 library(tidyr)
+library(RMySQL)
+library(jiebaRD)
+library(jiebaR)
 
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
@@ -286,3 +289,16 @@ names(disc_usage_data) <- c('sys_name', 'coll_time', 'cwc', 'cwd')
 names(discdata_processed) <- c('sys_name', 'coll_time', 'cwc', 'cwd')
 
 
+# chapter12---------------------------------------------------------
+setwd(file.path(data_path,
+                'R语言数据分析与挖掘实战/数据及代码/chapter12/data'))
+for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
+  assign(u, fread(paste(u, '.csv', sep = ''),
+                  header = T,
+                  stringsAsFactors = F,
+                  na.strings = ''))
+}
+
+userlog_clean <- userlog %>%
+  filter(str_detect(网页类别, '\\d')) %>%
+  mutate(web_type=substr(网页类别, 1, 3))
