@@ -299,6 +299,22 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   na.strings = ''))
 }
 
+# con = dbConnect(MySQL(), username='root', password='',
+#                 dbname='datascience')
+# dbListTables(con)
+# dbListFields(con, 'all_gzdata')
+# dbSendQuery(con, 'set names utf8')
+# res <- dbSendQuery(con, 'select * from all_gzdata')
+# df_sql <- fetch(res, n=100)
+# dbDisconnect(con)
+
 userlog_clean <- userlog %>%
   filter(str_detect(网页类别, '\\d')) %>%
   mutate(web_type=substr(网页类别, 1, 3))
+
+table(userlog_clean$web_type)
+
+userlog_clean %>%
+  filter(web_type==101) %>%
+  select(网页类别) %>%
+  table
