@@ -299,22 +299,32 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   na.strings = ''))
 }
 
-# con = dbConnect(MySQL(), username='root', password='',
-#                 dbname='datascience')
-# dbListTables(con)
-# dbListFields(con, 'all_gzdata')
-# dbSendQuery(con, 'set names utf8')
-# res <- dbSendQuery(con, 'select * from all_gzdata')
-# df_sql <- fetch(res, n=100)
-# dbDisconnect(con)
+con = dbConnect(MySQL(), username='root', password='',
+                dbname='datascience')
+dbSendQuery(con, 'set names gbk')
+dbListTables(con)
+dbListFields(con, 'all_gzdata')
+res <- dbSendQuery(con, 'select * from all_gzdata')
+df_sql <- fetch(res, n=-1)
+dbDisconnect(con)
 
-userlog_clean <- userlog %>%
-  filter(str_detect(网页类别, '\\d')) %>%
-  mutate(web_type=substr(网页类别, 1, 3))
+df_sql <- as.data.table(df_sql)
+names(df_sql)
+# 用户的点击量的分析
+click_by_userID <- df_sql[, .(c_num=length(pagePath)), by=userID]
+click_freq <- table(click_by_userID$c_num) %>% as.data.table()
+names(click_freq) <- c('click_num', 'user_num')
+click_freq$click_num <- as.numeric(click_freq$click_num)
+click_freq <- cbind(
+  click_freq,
+  click_freq[, .(click_rate=user_num/sum(user_num))]
+)
 
-table(userlog_clean$web_type)
+# 点击次数的分布情况
+click_dis <- rbind(
+  click_freq[click_num<7],
+  click_freq[click_num>=7, .(click_num=7,
+                             user_num=sum(user_num),
+                             click_rate=sum(click_rate))]
+)
 
-userlog_clean %>%
-  filter(web_type==101) %>%
-  select(网页类别) %>%
-  table
