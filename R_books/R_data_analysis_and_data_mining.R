@@ -1,4 +1,5 @@
 # R语言数据分析与挖掘实战
+rm(list=ls())
 # library----
 library(tidyverse)
 library(stringr)
