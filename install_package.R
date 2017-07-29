@@ -13,7 +13,6 @@ wants <- c("knitr","rmarkdown","devtools","epicalc","mosaic",
            "polycor","pROC","rms","pgirmess","rateratio.test",
            "exactci","Deducer","VGAM","ordinal","AER","gplots",
            "AICcmodavg")
-pac_data <- read.table('/Users/machuan/Downloads/install.packages.txt')
-wants <- pac_data[, 1] %>% as.character()
+
 has <- wants %in% rownames(installed.packages())
 if(any(!has)) install.packages(wants[!has])
