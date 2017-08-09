@@ -329,5 +329,6 @@ click_dis <- rbind(
                              click_rate=sum(click_rate))]
 )
 info <- df_sql[, c(1, 11)]
-info_clean <- info %>%
-  filter(!str_detect(fullURL, '\\?'))
+
+
+df_sql[fullURLId=='1999001'][, 'fullURL']
