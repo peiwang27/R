@@ -341,3 +341,5 @@ clean_df_sql <- df_sql %>%
   filter(str_detect(fullURL, '.html$')) %>%
   filter(!str_detect(fullURL, 'midques_')) %>%
   filter(!((fullURLId=='1999001')&(str_detect(fullURL, '\\?'))))
+
+info <- df_sql[, c(1, 11)]
