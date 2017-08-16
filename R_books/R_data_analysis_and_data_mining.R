@@ -311,7 +311,7 @@ dbDisconnect(con)
 
 df_sql <- as.data.table(df_sql)
 names(df_sql)
-# 用户的点击量的分析
+# 用户的点击量的分析和点击次数的分布
 click_by_userID <- df_sql[, .(c_num=length(pagePath)), by=userID]
 click_freq <- table(click_by_userID$c_num) %>% as.data.table()
 names(click_freq) <- c('click_num', 'user_num')
@@ -321,14 +321,23 @@ click_freq <- cbind(
   click_freq[, .(click_rate=user_num/sum(user_num))]
 )
 
-# 点击次数的分布情况
 click_dis <- rbind(
   click_freq[click_num<7],
   click_freq[click_num>=7, .(click_num=7,
                              user_num=sum(user_num),
                              click_rate=sum(click_rate))]
 )
-info <- df_sql[, c(1, 11)]
 
+# 网页排名分析
+click_num_by_fullURL <-
+  df_sql[str_detect(fullURL, 'html$'),
+         .(click_num=length(timestamp)),
+         by=fullURL][order(click_num, decreasing = T)]
 
-df_sql[fullURLId=='1999001'][, 'fullURL']
+# 数据清洗
+clean_df_sql <- df_sql %>%
+  unique %>%
+  filter(str_detect(fullURL, 'lawtime')) %>%
+  filter(str_detect(fullURL, '.html$')) %>%
+  filter(!str_detect(fullURL, 'midques_')) %>%
+  filter(!((fullURLId=='1999001')&(str_detect(fullURL, '\\?'))))
