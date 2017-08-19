@@ -299,7 +299,20 @@ for(u in (dir() %>% str_subset('csv') %>% str_replace('.csv', ''))){
                   stringsAsFactors = F,
                   na.strings = ''))
 }
-
+# 一些结论
+# 101：咨询相关；102：律师相关；199：其他；107：知识类型
+# 199中，lawfirm：律师事务所(106001)；
+#        ask/exp、ask/online：咨询经验(101009)、在线咨询(101008)
+# 199中的带？的页面，通过标题处理
+# 瞎逛的用户
+# 需要删除的几类数据：
+# 1. 咨询发布成功页（标题）
+# 2. 中间页面(midques_关键字)
+# 3. 网址中带有？，同时无法还原其类型
+# 4. 重复数据
+# 5. 无点击html行为
+# 6. 律师行为
+# 7. 搜索引擎数据
 con = dbConnect(MySQL(), username='root', password='',
                 dbname='datascience')
 dbSendQuery(con, 'set names gbk')
@@ -308,38 +321,60 @@ dbListFields(con, 'all_gzdata')
 res <- dbSendQuery(con, 'select * from all_gzdata')
 df_sql <- fetch(res, n=-1)
 dbDisconnect(con)
-
 df_sql <- as.data.table(df_sql)
-names(df_sql)
-# 用户的点击量的分析和点击次数的分布
-click_by_userID <- df_sql[, .(c_num=length(pagePath)), by=userID]
-click_freq <- table(click_by_userID$c_num) %>% as.data.table()
-names(click_freq) <- c('click_num', 'user_num')
-click_freq$click_num <- as.numeric(click_freq$click_num)
-click_freq <- cbind(
-  click_freq,
-  click_freq[, .(click_rate=user_num/sum(user_num))]
-)
 
-click_dis <- rbind(
-  click_freq[click_num<7],
-  click_freq[click_num>=7, .(click_num=7,
-                             user_num=sum(user_num),
-                             click_rate=sum(click_rate))]
-)
+get_title_type <- function(x){
+  result <- str_split(x, '(\\s*-\\s*)|((\\s*_\\s*))',
+                      simplify = T) %>%
+    as.character()
+  return(result[length(result)])
+}
+df_sql <- df_sql %>%
+  mutate(url_type=substr(fullURLId, 1, 3),
+         slash_num=str_count(fullURL, '/')-2) %>%
+  as.data.table()
 
-# 网页排名分析
-click_num_by_fullURL <-
-  df_sql[str_detect(fullURL, 'html$'),
-         .(click_num=length(timestamp)),
-         by=fullURL][order(click_num, decreasing = T)]
+# 分析fullurl数据
+url <- df_sql$fullURL
+url <- url[str_detect(url, 'lawtime')]
 
+# 查看不同类型的网页信息
+df_sql[, .(fullURLId, head(fullURL, 2)), keyby=fullURLId]
+
+# 网页分类的修正
+df_sql$fullURLId[(df_sql$fullURLId=='1999001')&
+                   (str_detect(df_sql$fullURL,
+                               'ask/exp'))] <- '101009'
+
+df_sql$fullURLId[(df_sql$fullURLId=='1999001')&
+                   (str_detect(df_sql$fullURL,
+                               'ask/online'))] <- '101008'
+
+df_sql$fullURLId[(df_sql$fullURLId=='1999001')&
+                   (str_detect(df_sql$fullURL,
+                               'lawfirm'))] <- '106001'
+
+# 不同类型的网址占比
+url_by_type <- table(df_sql$url_type) %>% as.data.table()
+names(url_by_type) <- c('url_type', 'url_type_num')
+url_by_type$rate <-
+  url_by_type$url_type_num/sum(url_by_type$url_type_num)
+
+table(df_sql$fullURLId) %>% as.data.table()
 # 数据清洗
-clean_df_sql <- df_sql %>%
+clean_df_sql  <- df_sql %>%
   unique %>%
   filter(str_detect(fullURL, 'lawtime')) %>%
   filter(str_detect(fullURL, '.html$')) %>%
   filter(!str_detect(fullURL, 'midques_')) %>%
-  filter(!((fullURLId=='1999001')&(str_detect(fullURL, '\\?'))))
+  filter(!str_detect(pageTitle, '咨询发布|发布咨询')) %>%
+  filter(!str_detect(pageTitle, '快车助手')) %>%
+  filter(!((url_type=='199')&(str_detect(fullURL, '//?'))))
+  
 
-info <- df_sql[, c(1, 11)]
+info <- df_sql[, c(1, 8, 11)]
+info$fullURL[str_detect(info$fullURL, '\\?')] <- NA
+info_d <- info[str_detect(fullURL, '_')]
+info_q <- info[!str_detect(fullURL, '_')]
+
+ask_items <- ask02[, c(1,2)] %>% unique
