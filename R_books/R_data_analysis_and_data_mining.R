@@ -323,20 +323,13 @@ df_sql <- fetch(res, n=-1)
 dbDisconnect(con)
 df_sql <- as.data.table(df_sql)
 
-get_title_type <- function(x){
-  result <- str_split(x, '(\\s*-\\s*)|((\\s*_\\s*))',
-                      simplify = T) %>%
-    as.character()
-  return(result[length(result)])
+# 增加网页类别和网址的具体类型的分析
+get_url_class <- function(x, n){
+  
 }
-df_sql <- df_sql %>%
-  mutate(url_type=substr(fullURLId, 1, 3),
-         slash_num=str_count(fullURL, '/')-2) %>%
-  as.data.table()
 
-# 分析fullurl数据
-url <- df_sql$fullURL
-url <- url[str_detect(url, 'lawtime')]
+df_sql <- df_sql %>%
+  mutate(url_type=substr(fullURL, 1, 3))
 
 # 查看不同类型的网页信息
 df_sql[, .(fullURLId, head(fullURL, 2)), keyby=fullURLId]
@@ -354,13 +347,13 @@ df_sql$fullURLId[(df_sql$fullURLId=='1999001')&
                    (str_detect(df_sql$fullURL,
                                'lawfirm'))] <- '106001'
 
-# 不同类型的网址占比
-url_by_type <- table(df_sql$url_type) %>% as.data.table()
-names(url_by_type) <- c('url_type', 'url_type_num')
-url_by_type$rate <-
-  url_by_type$url_type_num/sum(url_by_type$url_type_num)
+# 处理翻页的数据
+df_sql <- df_sql %>%
+  mutate(real_full_url=ifelse(
+    str_detect(fullURL, '_\\d{1,2}.html$'),
+               str_replace(fullURL, '(.*)_\\d{1,2}.html$', '\\1'),
+               fullURL))
 
-table(df_sql$fullURLId) %>% as.data.table()
 # 数据清洗
 clean_df_sql  <- df_sql %>%
   unique %>%
@@ -369,12 +362,11 @@ clean_df_sql  <- df_sql %>%
   filter(!str_detect(fullURL, 'midques_')) %>%
   filter(!str_detect(pageTitle, '咨询发布|发布咨询')) %>%
   filter(!str_detect(pageTitle, '快车助手')) %>%
-  filter(!((url_type=='199')&(str_detect(fullURL, '//?'))))
+  filter(!((url_type=='199')&(str_detect(fullURL, '//?')))) %>%
+  mutate(url_type_level1=(str_split(real_full_url,
+                                    '/',
+                                    simplify=T)[, 4]),
+         url_type_level2=(str_split(real_full_url,
+                                    '/',
+                                    simplify=T)[, 5]))
   
-
-info <- df_sql[, c(1, 8, 11)]
-info$fullURL[str_detect(info$fullURL, '\\?')] <- NA
-info_d <- info[str_detect(fullURL, '_')]
-info_q <- info[!str_detect(fullURL, '_')]
-
-ask_items <- ask02[, c(1,2)] %>% unique
