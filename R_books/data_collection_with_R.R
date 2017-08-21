@@ -9,7 +9,6 @@ library(lubridate)
 library(stringr)
 library(XML)
 library(maps)
-library(rjson)
 library(RJSONIO)
 
 # 设置数据的路径----
@@ -58,7 +57,7 @@ box()
 
 # 第二章 HTML-----------------------------------------------------
 setwd(file.path(data_path,
-                '/基于R语言的自动数据收集/ch-2-html'))
+                '基于R语言的自动数据收集/ch-2-html'))
 parsed_fortunes <- htmlParse('fortunes.html')
 
 h1 <- list('body'=function(x){NULL})
@@ -94,7 +93,7 @@ h3$return_I()
 # 第三章 XML and JSON---------------------------------------------
 # xml
 setwd(file.path(data_path,
-                '/基于R语言的自动数据收集/ch-3-xml'))
+                '基于R语言的自动数据收集/ch-3-xml'))
 
 bond <- xmlParse('bond.xml')
 root <- xmlRoot(bond)
@@ -103,4 +102,4 @@ xmlSize(root)
 
 
 # json
-indy <- rjson::fromJSON(file = 'indy.json')
+indy <- RJSONIO::fromJSON(content = 'indy.json')
