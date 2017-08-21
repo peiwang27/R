@@ -9,6 +9,8 @@ library(lubridate)
 library(stringr)
 library(XML)
 library(maps)
+library(rjson)
+library(RJSONIO)
 
 # 设置数据的路径----
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
@@ -90,6 +92,7 @@ h3$return_I()
 
 
 # 第三章 XML and JSON---------------------------------------------
+# xml
 setwd(file.path(data_path,
                 '/基于R语言的自动数据收集/ch-3-xml'))
 
@@ -97,3 +100,7 @@ bond <- xmlParse('bond.xml')
 root <- xmlRoot(bond)
 xmlName(root)
 xmlSize(root)
+
+
+# json
+indy <- rjson::fromJSON(file = 'indy.json')
