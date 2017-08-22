@@ -103,4 +103,5 @@ xmlSize(root)
 
 # json
 isValidJSON('indy.json')
-indy <- RJSONIO::fromJSON(content = 'indy.json')
+con <- file('indy.json', 'r')
+indy <- RJSONIO::fromJSON(con)
