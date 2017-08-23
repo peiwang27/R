@@ -115,3 +115,4 @@ setwd(file.path(data_path,
                 '基于R语言的自动数据收集/ch-4-xpath'))
 parsed_doc <- parsed_fortunes
 xpathSApply(parsed_doc, path = '/html/body/div/p/i')
+xpathSApply(parsed_doc, path='//p/i')
