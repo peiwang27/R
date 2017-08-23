@@ -105,3 +105,13 @@ xmlSize(root)
 isValidJSON('indy.json')
 con <- file('indy.json', 'r')
 indy <- RJSONIO::fromJSON(con)
+
+indy.vec <- unlist(indy, recursive = T, use.names = T)
+indy.vec[str_detect(names(indy.vec), 'name')]
+
+
+# 第四章 XPath
+setwd(file.path(data_path,
+                '基于R语言的自动数据收集/ch-4-xpath'))
+parsed_doc <- parsed_fortunes
+xpathSApply(parsed_doc, path = '/html/body/div/p/i')
