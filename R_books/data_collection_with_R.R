@@ -6,10 +6,12 @@
 # 加载相关的包----
 library(tidyverse)
 library(lubridate)
+library(data.table)
 library(stringr)
 library(XML)
 library(maps)
 library(RJSONIO)
+library(RCurl)
 
 # 设置数据的路径----
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
@@ -116,3 +118,19 @@ setwd(file.path(data_path,
 parsed_doc <- parsed_fortunes
 xpathSApply(parsed_doc, path = '/html/body/div/p/i')
 xpathSApply(parsed_doc, path='//p/i')
+
+parsed_stocks <- xmlParse(file='technology.xml')
+company <- c('Apple', 'IBM', 'Google')
+expQuery <- sprintf('//%s/close', company)
+
+getClose <- function(node){
+  value <- xmlValue(node)
+  company <- xmlName(xmlParent(node))
+  mat <- c(company=company, value=value)
+}
+
+stocks <- xpathSApply(parsed_stocks, expQuery, getClose) %>%
+  t %>%
+  as.data.table() %>%
+  mutate(value=as.numeric(value)) %>%
+  as.data.table
