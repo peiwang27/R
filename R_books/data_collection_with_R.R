@@ -134,3 +134,25 @@ stocks <- xpathSApply(parsed_stocks, expQuery, getClose) %>%
   as.data.table() %>%
   mutate(value=as.numeric(value)) %>%
   as.data.table
+
+# 第五章 Http-------------------------------------------------
+# 基本请求方法 - get方法
+## 获取图片的地址后可以下载了
+getURL('http://www.r-datacollection.com/materials/http/helloworld.html')
+url <- str_c('http://img2.ph.126.net/SicEe2pmb3km8yGe5kZsKQ',
+             '==/6632435558166361073.jpg',
+             sep='')
+getBinaryURL(url)
+getBinaryURL(url) %>% writeBin('test.jpg')
+
+url <- str_c('http://www.r-datacollection.com',
+             '/materials/http/helloworld.html',
+             sep='')
+getURL(url)
+
+url <- "http://www.r-datacollection.com/materials/http/GETexample.php"
+cat(getForm(url, name='Eddie', age=32))
+
+# 基本请求方法 - post
+url <- "http://www.r-datacollection.com/materials/http/POSTexample.php"
+cat(postForm(url, name='Eddie', age=32, style='post'))
