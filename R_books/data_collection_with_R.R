@@ -156,3 +156,7 @@ cat(getForm(url, name='Eddie', age=32))
 # 基本请求方法 - post
 url <- "http://www.r-datacollection.com/materials/http/POSTexample.php"
 cat(postForm(url, name='Eddie', age=32, style='post'))
+
+# RCurl的底层函数
+url <- 'http://www.r-datacollection.com/materials/http/helloworld.html'
+(pres <- curlPerform(url=url))
