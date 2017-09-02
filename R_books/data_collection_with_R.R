@@ -136,6 +136,8 @@ stocks <- xpathSApply(parsed_stocks, expQuery, getClose) %>%
   as.data.table
 
 # 第五章 Http-------------------------------------------------
+setwd(file.path(data_path,
+                '基于R语言的自动数据收集/ch-5-http'))
 # 基本请求方法 - get方法
 ## 获取图片的地址后可以下载了
 getURL('http://www.r-datacollection.com/materials/http/helloworld.html')
@@ -159,4 +161,13 @@ cat(postForm(url, name='Eddie', age=32, style='post'))
 
 # RCurl的底层函数
 url <- 'http://www.r-datacollection.com/materials/http/helloworld.html'
-(pres <- curlPerform(url=url))
+curlPerform(url=url)
+
+
+# 第六章 scraping--------------------------------------------
+setwd(file.path(data_path,
+                '基于R语言的自动数据收集/ch-9-scraping'))
+url <- str_c('http://www.elections.state.md.us/elections/2012',
+             '/election_data/index.html',
+             sep='')
+links <- getHTMLLinks(url)
