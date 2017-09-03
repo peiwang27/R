@@ -171,3 +171,4 @@ url <- str_c('http://www.elections.state.md.us/elections/2012',
              '/election_data/index.html',
              sep='')
 links <- getHTMLLinks(url)
+
