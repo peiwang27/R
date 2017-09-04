@@ -172,3 +172,13 @@ url <- str_c('http://www.elections.state.md.us/elections/2012',
              sep='')
 links <- getHTMLLinks(url)
 
+downloadCSV <- function(filename, baseurl, folder){
+  dir.create(folder, showWarnings = F)
+  fileurl <- str_c(baseurl, filename, sep='')
+  if(file.exists(str_c(folder, '/', filename, sep=''))){
+    download.file(fileurl,
+                  destfile = str_c(folder, '/', 'filename',
+                                   sep=''))
+    Sys.sleep(1)
+  }
+}
