@@ -12,6 +12,7 @@ library(XML)
 library(maps)
 library(RJSONIO)
 library(RCurl)
+library(plyr)
 
 # 设置数据的路径----
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
@@ -164,7 +165,7 @@ url <- 'http://www.r-datacollection.com/materials/http/helloworld.html'
 curlPerform(url=url)
 
 
-# 第六章 scraping--------------------------------------------
+# 第九章 scraping--------------------------------------------
 setwd(file.path(data_path,
                 '基于R语言的自动数据收集/ch-9-scraping'))
 url <- str_c('http://www.elections.state.md.us/elections/2012',
@@ -172,6 +173,7 @@ url <- str_c('http://www.elections.state.md.us/elections/2012',
              sep='')
 links <- getHTMLLinks(url)
 
+# 下载csv文件
 downloadCSV <- function(filename, baseurl, folder){
   dir.create(folder, showWarnings = F)
   fileurl <- str_c(baseurl, filename, sep='')
@@ -182,3 +184,16 @@ downloadCSV <- function(filename, baseurl, folder){
     Sys.sleep(1)
   }
 }
+
+
+# 从HTML采集链接、列表和表格
+mac_url <- 'http://en.wikipedia.org/wiki/Machiavelli'
+mac_source <- readLines(mac_url)
+mac_parsed <- htmlParse(mac_source)
+mac_node <- mac_parsed['//p'][[1]]
+links <- getHTMLLinks(mac_source)
+
+getHTMLLinks(mac_source,
+             xpQuery = '//a[@class="extiw"]/@href')
+readHTMLList(mac_source)
+readHTMLTable(mac_source)
