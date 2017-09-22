@@ -179,6 +179,9 @@ data("nhanes2")
 head(nhanes2)
 complete.cases(nhanes2) %>% sum
 md.pattern(nhanes2)
+
+# 通过多重插补法处理缺失数据
+
 ```
 
 # R语言数据整形
