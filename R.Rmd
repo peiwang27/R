@@ -185,6 +185,12 @@ md.pattern(nhanes2)
 ```
 
 # R语言数据整形
+## stack unstack函数
+```{r}
+x <- data.frame(A=1:4, B=seq(1.2, 1.5, 0.1), C=rep(1,4))
+x1 <- stack(x)
+unstack(x1, form = values~ind)
+```
 ## transform()、with()函数
 transform()函数对数据框进行操作可以增加新列，改变列的取值，或者通过赋值为NULL删除列。
 with()函数的使用不限制数据框。
@@ -393,6 +399,24 @@ flights_dt <- flights %>%
 ```
 
 # R语言绘图
+- 绘图示例
+```{r}
+demo(graphics)
+demo(persp)
+```
+- 多元绘图函数
+```{r}
+# matplot函数
+y <- data.frame(x1=1:5, x2=rnorm(5, 0, 1), x3=rgamma(5,2,3))
+matplot(y, type='l', col=1:3, lwd=2)
+legend(1, 5, col=1:3, pch='—', legend=c('x1', 'x2', 'x3'))
+
+# coplot函数
+data("warpbreaks")
+coplot(breaks~1:54|wool*tension, data=warpbreaks,
+       col='red', bg='pink',
+       pch=21, bar.bg=c(fac='light blue'))
+```
 - The Basic Grammer of ggplot
 
 ggplot(data=<DATA>) +

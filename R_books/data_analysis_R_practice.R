@@ -52,3 +52,7 @@ pre <- salary.pre %*% q
 index <- is.na(salary$Salary)
 salary$Salary[index] <- pre
 salary
+
+# charpter 4 -------------------------------------------------
+shoppingResult <- read.table('online shopping.txt', header = T)
+with(shoppingResult, plot(period, amount))
