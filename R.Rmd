@@ -3,6 +3,8 @@ title: "R语言总结"
 author: "machuan"
 date: "1/6/2017"
 output: word_document
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
