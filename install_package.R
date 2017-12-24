@@ -2,9 +2,9 @@
 #library(tidyverse)
 #library(data.table)
 
-# 保存历史的包
-row.names(installed.packages()) %>%
-  write.table('installed.txt')
+# run next code before install new version
+#row.names(installed.packages()) %>%
+#  write.table('installed.txt')
 
 # 保存之后安装新的版本的R open
 wants <- read.table('installed.txt')
