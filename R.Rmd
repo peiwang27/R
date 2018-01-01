@@ -52,7 +52,7 @@ options(oldOpt)
 ## excel文件的读取
 - RODBC包
 library(RODBC)
-con <- obdcConnectExcel2007(file)
+con <- odccConnectExcel2007(file)
 sqlTables(con) # 查看excel文件中sheet的名称
 sqlFetch(con, sheet_name)
 odbcClose(con)
