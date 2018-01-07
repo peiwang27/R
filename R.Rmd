@@ -22,6 +22,7 @@ library(car)
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+setwd(data_path)
 ```
 
 # 数据的输入输出
@@ -52,7 +53,7 @@ options(oldOpt)
 ## excel文件的读取
 - RODBC包
 library(RODBC)
-con <- odccConnectExcel2007(file)
+con <- odbcConnectExcel2007(file)
 sqlTables(con) # 查看excel文件中sheet的名称
 sqlFetch(con, sheet_name)
 odbcClose(con)
