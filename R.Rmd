@@ -4,7 +4,7 @@ author: "machuan"
 date: "1/6/2017"
 output: word_document
 editor_options: 
-  chunk_output_type: console
+chunk_output_type: console
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
@@ -20,8 +20,13 @@ library(car)
 # 数据读取路径的设置
 ```{r}
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
+tina_path <- '/Users/Tina/codespace/r'
 mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
-data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+data_path <- ifelse(Sys.info()[1]=='Windows',
+                    windows_path,
+                    ifelse(Sys.info()['user']=='Tina',
+                           tina_path,
+                           mac_path))
 setwd(data_path)
 ```
 
