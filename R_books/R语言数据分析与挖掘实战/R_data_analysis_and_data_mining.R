@@ -12,7 +12,7 @@ library(jiebaRD)
 library(jiebaR)
 
 windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
-mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
+mac_path <- '/Users/machuan/CodeSpace//Code.Data/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 csv_encoding <- ifelse(Sys.info()[1]=='Windows', 'UTF-8', 'gb')
 
