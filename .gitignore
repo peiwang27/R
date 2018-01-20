@@ -1,5 +1,9 @@
 .DS_Store
+..gitignore.un~
 .Rhistory
-R.Rproj
 .Rproj.user/
 .Rproj.user
+.gitignore~
+.vs/
+R.Rproj
+R.rxproj
