@@ -19,9 +19,9 @@ library(car)
 ```
 # 数据读取路径的设置
 ```{r}
-windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
+windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
 tina_path <- '/Users/Tina/codespace/r'
-mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
+mac_path <- '/Users/machuan/CodeSpace/R/R'
 data_path <- ifelse(Sys.info()[1]=='Windows',
                     windows_path,
                     ifelse(Sys.info()['user']=='Tina',
@@ -37,8 +37,8 @@ setwd(data_path)
 library(MASS)
 data(Insurance)
 check_in <- function(x){
-  check_vector <- '-|>'
-  return(grepl(check_vector, x) %>% sum)
+  check_pattern <- '-|>' # contains '>' or '-'
+  return(grepl(check_pattern, x) %>% sum)
 }
 
 check_is.na <- function(x){
@@ -227,10 +227,11 @@ detach(mtcars)
 ```{r reshape2}
 data("airquality")
 head(airquality)
-aqm <- melt(airquality, id=c('Month', 'Day'), measure.vars=c('Wind', 'Temp'))
+aqm <- melt(airquality, id=c('Month', 'Day'), measure.vars=c('Wind', 'Temp'),
+            variable.name = 'Test_variable', value.name = 'value')
 head(aqm)
-dcast(aqm, Day~Month+variable) %>% head
-dcast(aqm, Month~variable, sum) %>% head
+dcast(aqm, Day~Month+Test_variable) %>% head
+dcast(aqm, Month~Test_variable, sum) %>% head
 ```
 ## tidyr包
 ```{r tidyr}
