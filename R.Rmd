@@ -329,6 +329,11 @@ flight2 %>% left_join(airports, by=c('dest'='faa'))
 flights %>% semi_join(flights %>% count(dest, sort=T) %>% head(10), by='dest')
 flights %>% anti_join(planes %>% count(tailnum, sort=T) %>% head(10), by='tailnum')
 ```
+## purrr
+```{r}
+
+```
+
 ## 数据合并
 merge(x, y, by = intersect(names(x), names(y)),
       by.x = by, by.y = by, all = FALSE, all.x = all, all.y = all,
