@@ -419,6 +419,16 @@ flights_dt <- flights %>%
 demo(graphics)
 demo(persp)
 ```
+- 颜色、文字大小等设置
+```{r}
+plot(c(1:5), col='white')
+text(2, 4, labels='font=1:正常字体', font=1, cex=1.2)
+text(3, 3, labels='font=2:粗体字体', font=2, cex=1)
+text(4, 2, labels='font=3:斜体字体', font=3, cex=0.8)
+text(5, 1, labels='font=4:粗斜体字体', font=4, cex=0.6)
+```
+
+
 - 多元绘图函数
 ```{r}
 # matplot函数
