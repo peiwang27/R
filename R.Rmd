@@ -9,6 +9,11 @@ chunk_output_type: console
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = T)
 ```
+# install packages from local source
+```{r}
+install.packages('path',repos=NULL,type="source")
+```
+
 # 加载的包及基本设置
 ```{r library}
 library(ggplot2)
