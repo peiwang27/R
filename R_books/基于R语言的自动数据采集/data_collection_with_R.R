@@ -94,10 +94,7 @@ h3$return_I()
 
 # 第三章 XML and JSON---------------------------------------------
 # xml
-setwd(file.path(data_path,
-                '基于R语言的自动数据收集/ch-3-xml'))
-
-bond <- xmlParse('bond.xml')
+bond <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/bond.xml')
 root <- xmlRoot(bond)
 xmlName(root)
 xmlSize(root)
