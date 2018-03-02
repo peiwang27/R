@@ -1,0 +1,1597 @@
+with(all_btw, cor(erststimmen_t1,zweitstimmen_t1, na.rm=T))
+?car
+?cor
+with(all_btw, cor(erststimmen_t1,zweitstimmen_t1, use="pairwise.complete.obs"))
+hh <- ggplot(data=all_btw, aes(x=erststimmen_t1, y=zweitstimmen_t1))+geom_point()+geom_smooth(method="lm")#
+hh
+hh <- ggplot(data=all_btw, aes(x=erststimmen_t1, y=zweitstimmen_t1))+geom_point()+geom_smooth()#
+hh
+m1 <- lm(erststimmen_t1 ~ zweitstimmen_t1, data=all_btw)
+summary(m1)
+str(m1)
+plot(all_btw$erststimmen_t1, m1$fitted.values)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData")
+ls()
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)
+head(btw02)
+lmfun <- function(data)lm(zweitstimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte, data=data)#
+ddply(btw02, "party", lmfun)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data)lm(zweitstimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte, data=data)#
+ddply(btw02, "party", lmfun)
+dlply(btw02, "party", lmfun)
+dlply(btw02, "party", function(x)summary(lmfun(x)))
+lmfun <- function(data)lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+dlply(btw02, "party", function(x)summary(lmfun(x)))
+require(Zelig)
+install.packages("Zelig")
+require(Zelig)
+data(grunfeld)
+grunfeld
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data)lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+dlply(btw02, "party", function(x)summary(lmfun(x)))
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	pred.values <- m$predicted.values#
+	return(list(m, pred.values))#
+	}#
+dlply(btw02, "party", lmfun)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	pred.values <- m$predicted.values#
+	return(list(summary(m), pred.values))#
+	}#
+dlply(btw02, "party", lmfun)
+cool <- dlply(btw02, "party", lmfun)
+cool[[1]]
+lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)
+lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)$predicted.values
+lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)$predicted.value
+kk <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)
+str(kk)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	fitted.values <- m$fitted.values#
+	return(list(summary(m), fitted.values))#
+	}#
+cool <- dlply(btw02, "party", lmfun)
+cool
+head(btw02)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	m2 <- lm(erststimmen_t2 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	#fitted.values <- m$fitted.values#
+	return(list(summary(m), summary(m2)))#
+	}#
+cool <- dlply(btw02, "party", lmfun)
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	m2 <- lm(zweitstimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=data)#
+	#fitted.values <- m$fitted.values#
+	return(list(summary(m), summary(m2)))#
+	}#
+cool <- dlply(btw02, "party", lmfun)
+cool
+rm(list=ls())#
+#
+#package#
+require(stringr)#
+require(reshape)#
+require(Matching)#
+require(ggplot2)#
+require(Zelig)#
+#Data#
+load("~/Dropbox/PhD Zurich/germany/bewerber/all_btw.RData");ls()#
+#
+btw02 <- subset(all_btw, year==2002)#
+#
+lmfun <- function(data){#
+	m <- lm(zweitstimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte, data=data)#
+	data$fit <- m$fitted.values#
+	m2 <- lm(fit ~ age+gender+adel+dr+in_leg, data=data)#
+	#fitted.values <- m$fitted.values#
+	return(list(summary(m), summary(m2)))#
+	}#
+cool <- dlply(btw02, "party", lmfun)
+cool
+Zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)
+zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02)
+zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02, model="normal")
+foo <- zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02, model="normal")
+summary(foo)
+?setx
+foo <- zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02, model="normal")#
+x.out <- setx(foo)#
+s.out <- sim(foo, x=x.out)
+plot(s.out)
+s.out
+summary(s.out)
+foo <- zelig(erststimmen_t1 ~ Bev_35+bev_60plus+unemploy2001+landfarm+school_gym+bev_dichte+age+gender+adel+dr+in_leg, data=btw02, model="normal")#
+x.out <- setx(foo, age=45, gender=1, adel=0, dr=0, in_leg=1)
+s.out <- sim(foo, x=x.out)
+summary(s.out)
+install.packages("ggplot2")
+install.packages("ppcor")
+require(XML)
+url <- htmlParse(readLines("http://webarchiv.bundestag.de/archive/2005/0113/bic/a_prot/1999/index.html"))
+url
+url <- readLines("http://webarchiv.bundestag.de/archive/2005/0113/bic/a_prot/1999/index.html")
+url
+pah <- readLines("http://webarchiv.bundestag.de/archive/2005/0113/bic/a_prot/1999/index.html")
+pah
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#for tables#
+splitv <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv <- dcast(splitv, district + first_vote + second_vote ~ year)#
+splitv <- select(splitv, -district)
+head(splitv)
+tabular( (second_vote) ~ (2002)*mean, data = splitv)
+meanx <- function(x)mean(x, na.rm = T)
+tabular( (second_vote) ~ (2002)*meanx, data = splitv)
+tabular( second_vote ~(n+1), data = splitv)
+tabular( second_vote ~ first_vote, data = splitv)
+tabular( second_vote ~ 2002, data = splitv)
+tabular( second_vote ~ 2002*(mean), data = splitv)
+tabular( second_vote ~ 2005*(mean), data = splitv)
+tabular( second_vote ~ 2005*(n), data = splitv)
+tabular( second_vote ~ 2005*(length), data = splitv)
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)
+head(splitvote_nz)
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#for tables#
+splitv_table <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv_table <- dcast(splitv_table, district + first_vote + second_vote ~ year)#
+splitv_table <- select(splitv_table, -district)#
+##################
+#SAVE#
+save("~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz"))
+save(file = "~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz"))
+install.packages("knitr")
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#for tables#
+splitv_table <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv_table <- dcast(splitv_table, district + first_vote + second_vote ~ year)#
+splitv_table <- select(splitv_table, -district)#
+##################
+#SAVE#
+save(file = "~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz"))
+splitv2$first_vote <- as.factor(splitv2$first_vote)#
+splitv2$second_vote <- as.factor(splitv2$second_vote)#
+colnames(splitv2)[3] <- "lol"
+splitv <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv2 <- dcast(splitv, district + first_vote + second_vote ~ year)#
+splitv2 <- select(splitv2, -district)#
+splitv2$first_vote <- as.factor(splitv2$first_vote)#
+splitv2$second_vote <- as.factor(splitv2$second_vote)#
+colnames(splitv2)[3] <- "lol"
+splitv3
+splitv2
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#for tables#
+splitv_table <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv_table <- dcast(splitv_table, district + first_vote + second_vote ~ year)#
+splitv_table <- select(splitv_table, -district)#
+splitv_table$first_vote <- as.factor(splitv_table$first_vote)#
+splitv_table$second_vote <- as.factor(splitv_table$second_vote)
+splitv_table
+latex( tabular( (first_vote)*(second_vote) ~ (2002)*(MEAN+SD), data = splitv_table) )
+MEAN <- function(x)mean(x, na.rm = T)#
+SD <- function(x)sd(x, na.rm = T)#
+latex( tabular( (first_vote)*(second_vote) ~ (2002)*(MEAN+SD), data = splitv_table) )
+?tabular
+head(splitv_table)
+colnames(splitv_tabl)[3:6] <- c("y2002", "y2005", "y2008", "y2011")
+colnames(splitv_table)[3:6] <- c("y2002", "y2005", "y2008", "y2011")
+save(file = "~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz"))
+latex( tabular( (first_vote)*(second_vote) ~ (y2002 + y2005 + y2008 + y2011)*(MEAN+SD), data = splitv_table) )
+#above or under?#
+splitvote_nz$ind <- ifelse(splitvote_nz$dif_t0 > 0, "winner", "loser")#
+#
+#dataset for vote shares#
+splitvote_nz_v <- filter(splitvote_nz, first_vote == second_vote)#
+#
+#plot#
+gg1 <- ggplot(splitvote_nz, aes(x = dif_t0, y = per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + facet_wrap(~second_vote) + xlab("SMD margin of victory (t-1)") + ylab("% of votes from other parties (t)") + ggtitle("Effect of incumbency on National SMD split vote %") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dashed", color = "grey")#
+gg1#
+#
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = second_vote_v2)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg2
+install.packages("tikzDevice")
+install.packages("knitr")
+#empty#
+rm(list=ls())#
+#
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#for tables#
+splitv_table <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv_table <- dcast(splitv_table, district + first_vote + second_vote ~ year)#
+splitv_table <- select(splitv_table, -district)#
+splitv_table$first_vote <- as.factor(splitv_table$first_vote)#
+splitv_table$second_vote <- as.factor(splitv_table$second_vote)#
+colnames(splitv_table)[3:6] <- c("y2002", "y2005", "y2008", "y2011")
+save(file = "~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz"))
+head(splitvote_nz)
+splitvote_nz$ind <- ifelse(splitvote_nz$dif_t0 > 0, "winner", "loser")
+head(splitvote_nz)
+gg1 <- ggplot(splitvote_nz, aes(x = dif_t0, y = per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + facet_wrap(~second_vote) + xlab("SMD margin of victory (t-1)") + ylab("% of votes from other parties (t)") + ggtitle("Effect of incumbency on National SMD split vote %") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dashed", color = "grey")
+gg1
+splitvote_nz_v <- filter(splitvote_nz, first_vote == second_vote)
+rm(list=ls())
+load("~/Dropbox/new zealand/splitvote/sv_tables.RData")
+ls()
+head(splitvote_nz)
+splitvote_nz$ind <- ifelse(splitvote_nz$dif_t0 > 0, "winner", "loser")
+splitvote_nz_v <- filter(splitvote_nz, first_vote == second_vote)
+head(splitvote_nz)
+sum(splitvote_nz$numSwitch)
+unique(splitvote_nz$year)
+lol <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	return(total2/total)#
+}
+lol <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(lol)
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	x$sv.per <- total/total2#
+	return(x)#
+}
+lol <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(lol)
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	x$sv.per <- total2/total#
+	return(x)#
+}
+lol <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(lol)
+#empty#
+rm(list=ls())#
+#
+#################
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#################
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#################
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	x$sv.per <- total2/total#
+	return(x)#
+}#
+#################
+#Get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)
+head(splitvote_nz)
+#empty#
+rm(list=ls())#
+#
+#################
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#################
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#################
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	x$sv.per <- total2/total#
+	return(x)#
+}#
+#################
+#Get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(splitvote_nz_per)
+dim(splitvote_nz_per)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")
+gg3
+ifelse
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)#
+splitvote_nz_per <- filter(splitvote_nz, first_vote == second_vote)
+splitvote_nz$ind <- ifelse(splitvote_nz$dif_t0 > 0, "winner", "loser")
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)#
+splitvote_nz_per <- filter(splitvote_nz, first_vote == second_vote)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg3
+head(splitvote_nz_per)
+c
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(splitvote_nz_per)
+splitvote_nz_per <- filter(splitvote_nz, first_vote == second_vote)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg3
+head(splitvote_nz_per)
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)
+head(splitvote_nz_per)
+splitvote_nz_per <- filter(splitvote_nz, first_vote == second_vote)
+head(splitvote_nz_per)
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)#
+splitvote_nz_per <- filter(splitvote_nz_per, first_vote == second_vote)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg3
+#empty#
+rm(list=ls())#
+#
+#################
+#pkgs#
+library(dplyr)#
+library(magrittr)#
+library(tidyr)#
+library(plyr)#
+library(ggplot2)#
+library(reshape2)#
+library(tables)#
+#
+#################
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/count/nz_count.RData")#
+load("~/Dropbox/new zealand/count/nz_count.RData")#
+#################
+#functions#
+getFirstTwo <- function(x, by){#
+#
+	pars <- as.list(match.call()[-1])#
+	ordered.x <- arrange(x, -(get(as.character(pars$by))))#
+	ordered.x$dif <- ordered.x[, as.character(pars$by)] - ordered.x[, as.character(pars$by)][1]#
+	ordered.x$dif[1] <- ordered.x[, as.character(pars$by)][1] - ordered.x[, as.character(pars$by)][2]#
+	ordered.x[, as.character(pars$by)] <- NULL#
+	return(ordered.x)#
+}#
+#
+sv_per <- function(x){#
+	total <- sum(x$total)#
+	sub.x <- filter(x, first_vote != second_vote)#
+	total2 <- sum(sub.x$numSwitch)#
+	x$sv.per <- total2/total#
+	return(x)#
+}#
+#################
+#Get results#
+all_nz <- tbl_df(all_nz) #easier print#
+all_nz$country <- all_nz$Erststimmen <- all_nz$Zweitstimmen <- NULL#
+all_nz <- filter(all_nz, year > 1998)#
+#
+all_nz1 <- select(all_nz, -Zweitstimmen_per)#
+all_nz2 <- select(all_nz, -Erststimmen_per)#
+#
+all_nz2 <- ddply(all_nz2, .(year, district), function(x)getFirstTwo(x = x, by = Zweitstimmen_per))#
+all_nz1 <- ddply(all_nz1, .(year, district), function(x)getFirstTwo(x = x, by = Erststimmen_per))#
+#SPLITVOTES#
+#
+#load#
+#load("/Users/christian/Documents/old phd/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+load("~/Dropbox/new zealand/splitvote/splitvote_nz.RData") #This table shows how the voters who voted for a registered political party contesting the party vote allocated their electorate candidate vote.#
+#
+splitvote_nz <- tbl_df(splitvote_nz) #easier print#
+#
+#merge votes#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "second_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(8,9)] <- c("second_vote_v1", "second_vote_v2")#
+splitvote_nz <- merge(splitvote_nz, all_nz, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+colnames(splitvote_nz)[c(10,11)] <- c("first_vote_v1", "first_vote_v2")#
+#
+#abstinent remove#
+#splitvote_nz <- filter(splitvote_nz, first_vote != "abstinent", second_vote != "abstinent")#
+#
+#mutate variables#
+splitvote_nz <- mutate(splitvote_nz, #
+	per = per / 100,#
+	per_switch = per * second_vote_v2, #
+	v1v2_votes = per_switch / first_vote_v1) #%>% filter(., !is.na(v1v2_votes))#
+#merge with dif values#
+all_nz1$year <- as.factor(all_nz1$year)#
+levels(all_nz1$year) <- c("2002", "2005", "2008", "2011", "2014")#
+all_nz1$year <- as.character(all_nz1$year)#
+colnames(all_nz1)[4] <- "dif_t0"#
+splitvote_nz <- merge(splitvote_nz, all_nz1, by.x = c("year", "district", "first_vote"), by.y = c("year", "district", "party"), all.x = T)#
+#
+#subset for Labour and National and specific second vote parties#
+splitvote_nz <- filter(splitvote_nz, first_vote %in% c("National", "Labour"), second_vote %in% c("Labour", "National", "Act", "Alliance", "NZ First", "Progressive", "Greens", "United Future", "Maori Party"))#
+splitvote_nz <- filter(splitvote_nz, abs(dif_t0) < 0.9)#
+#
+#create pure split vote variable#
+#
+#for tables#
+splitv_table <- select(splitvote_nz, year, district, first_vote, second_vote, per)#
+splitv_table <- dcast(splitv_table, district + first_vote + second_vote ~ year)#
+splitv_table <- select(splitv_table, -district)#
+splitv_table$first_vote <- as.factor(splitv_table$first_vote)#
+splitv_table$second_vote <- as.factor(splitv_table$second_vote)#
+colnames(splitv_table)[3:6] <- c("y2002", "y2005", "y2008", "y2011")#
+#
+MEAN <- function(x)mean(x, na.rm = T)#
+SD <- function(x)sd(x, na.rm = T)#
+latex( tabular( (first_vote)*(second_vote) ~ (y2002 + y2005 + y2008 + y2011)*(MEAN+SD), data = splitv_table) )#
+#above or under?#
+splitvote_nz$ind <- ifelse(splitvote_nz$dif_t0 > 0, "winner", "loser")#
+#
+#dataset for vote shares#
+splitvote_nz_v <- filter(splitvote_nz, first_vote == second_vote)#
+splitvote_nz_per <- ddply(splitvote_nz, c("year", "district", "first_vote"), sv_per)#
+splitvote_nz_per <- filter(splitvote_nz_per, first_vote == second_vote)#
+#
+##################
+#SAVE#
+save(file = "~/Dropbox/new zealand/splitvote/sv_tables.RData", list = c("splitv_table", "splitvote_nz", "splitvote_nz_per"))#
+#
+#plot#
+gg1 <- ggplot(splitvote_nz, aes(x = dif_t0, y = per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + facet_wrap(~second_vote) + xlab("SMD margin of victory (t-1)") + ylab("% of votes from other parties (t)") + ggtitle("Effect of incumbency on National SMD split vote %") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dashed", color = "grey")#
+gg1#
+#
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = second_vote_v2)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg2#
+#
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg3#
+# #Model#
+# rdd <- function(data, formula){	#
+# #	data <- filter(data, data[, x] < cutoff + bdw, data[, x] > cutoff - bdw)#
+# #	data$ind <- ifelse(data[, x] > 0, 1, 0)#
+	# df <- split(data, f = data$ind)#
+	# mm <- lapply(df, function(x){#
+		# m <- lm(formula = formula, data = x)#
+		# m <- predict(m, newdata = data.frame(dif_t0 = 0), interval = "predict")#
+		# return(m)#
+	# })#
+	# return(mm)#
+# }#
+#
+# splitvote_nz2 <- filter(splitvote_nz_v, dif_t0 > -0.2, dif_t0 < 0.2)#
+#
+# rdd(data = splitvote_nz2, formula = second_vote_v1~poly(dif_t0, 1))
+require(magrittr)
+c(1,2 ) %>% mean
+function(x) %>% mean
+function(x)c(1) %>% mean
+gg1
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.2,0.2)#
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1.5,0.1.5)#
+gg3
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1,0.1)#
+gg3
+head(splitvote_nz_per)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1,0.1) + facet_wrap(~first_vote)#
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1,0.1) + facet_wrap(first_vote~)#
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1,0.1) + facet_grid(first_vote~)#
+gg3
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + xlim(-0.1,0.1) + facet_grid(first_vote~.)#
+gg3
+head(splitvote_nz_per)
+unique(splitvote_nz_per$year)
+dim(splitvote_nz_per$year)
+dim(splitvote_nz_per)
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + facet_grid(first_vote~.)#
+gg3
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = second_vote_v2)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg2
+head(splitvote_nz_v)
+dim(splitvote_nz_v)
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = first_vote_v1)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black")#
+gg2
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = first_vote_v1)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + facet_grid(first_vote~.)#
+gg2
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = first_vote_v1)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + facet_grid(first_vote~.) + xlim(-0.15,0.15)#
+gg2
+gg2 <- ggplot(splitvote_nz_v, aes(x = dif_t0, y = first_vote_v1)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + facet_grid(first_vote~.) + xlim(-0.2,0.2)#
+gg2
+dim(splitvote_nz_v)
+4*70
+280*2
+5*70
+gg3 <- ggplot(splitvote_nz_per, aes(x = dif_t0, y = sv.per)) + geom_point() + geom_smooth(aes(group = ind, color = as.factor(ind)), method = "lm", formula = y ~ poly(x, 2)) + theme_bw() + xlab("SMD margin of victory (t-1)") + ylab("% votes in election t") + ggtitle("Effect of incumbency on National SMD vote share") + guides(color = FALSE) + geom_vline(xintercept = 0, linetype = "dotted", color = "black") + facet_grid(first_vote~.)#
+gg3
+rm(list=ls())
+Sys.setenv(MAKEFLAGS = "-j4")
+source('http://mc-stan.org/rstan/install.R', echo = TRUE, max.deparse.length = 2000)#
+install_rstan()
+Sys.setenv(MAKEFLAGS = "-j4")
+source('http://mc-stan.org/rstan/install.R', echo = TRUE, max.deparse.length = 2000)#
+install_rstan()
+library(rstna)
+library(rstan)
+## @knitr rdd_sep#
+load(file = "~/Dropbox/PhD Zurich/new zealand/splitvote/sv_tables.RData")#
+#
+parties_to <- c("Labour", "National")#
+parties_from <- c("Labour", "National", "Act", "Alliance", "NZ First",  "Greens", "United Future", "Maori Party") #"Progressive",
+head(splitv)
+head(gg_splitv)
+gg_splitv <- subset(splitv, !(party_vote %in% parties_to))
+head(gg_splitv)
+sep.tab
+#-----------------------#
+## @knitr rdd_sep#
+load(file = "~/Dropbox/PhD Zurich/new zealand/splitvote/sv_tables.RData")#
+#
+parties_to <- c("Labour", "National")#
+parties_from <- c("Labour", "National", "Act", "Alliance", "NZ First",  "Greens", "United Future", "Maori Party") #"Progressive",#
+#
+sep.list <- list()#
+for(i in 1:length(parties_to)){#
+  for(j in 1:length(parties_from)){#
+		position <- length(sep.list) + 1#
+#
+		dat <- subset(splitv, candidate_vote == parties_to[i] & party_vote == parties_from[j])#
+		sep.list[[position]] <- rdd::RDestimate(numSwitch ~ dif_t0, cutpoint = 0, data = dat)#
+	}#
+}#
+#
+sep.tab <- lapply(sep.list, function(x) c(x$est[1], x$se[1])) %>% do.call("rbind", .) %>% as.data.frame#
+colnames(sep.tab) <- c("est", "se")#
+sep.tab$candidate_vote <- rep(parties_to, each = 8)#
+sep.tab$party_vote <- rep(parties_from, times = 2)#
+sep.tab$est <- formatC(sep.tab$est, digits = 3)#
+sep.tab$se <- formatC(sep.tab$se, digits = 3)#
+sep.tab$se <- sprintf("[%s]", sep.tab$se)#
+sep.tab$est <- paste(sep.tab$est, sep.tab$se, sep = " ")#
+sep.tab$se <- NULL#
+sep.tab <- dcast(sep.tab, party_vote ~ candidate_vote, value.var = "est")#
+colnames(sep.tab)[1] <- "Party Vote"#
+rownames(sep.tab) <- NULL#
+#
+print(xtable(sep.tab, caption = "RD estimates of incumbency on split vote shares for Labour and National candidates from six small parties (standard error in brackets)", label = "tab:rdd_sep"), caption.placement = getOption("xtable.caption.placement", "top"), size = "normalsize")
+library(magrittr)
+library(xtable)
+#-----------------------#
+## @knitr rdd_sep#
+load(file = "~/Dropbox/PhD Zurich/new zealand/splitvote/sv_tables.RData")#
+#
+parties_to <- c("Labour", "National")#
+parties_from <- c("Labour", "National", "Act", "Alliance", "NZ First",  "Greens", "United Future", "Maori Party") #"Progressive",#
+#
+sep.list <- list()#
+for(i in 1:length(parties_to)){#
+  for(j in 1:length(parties_from)){#
+		position <- length(sep.list) + 1#
+#
+		dat <- subset(splitv, candidate_vote == parties_to[i] & party_vote == parties_from[j])#
+		sep.list[[position]] <- rdd::RDestimate(numSwitch ~ dif_t0, cutpoint = 0, data = dat)#
+	}#
+}#
+#
+sep.tab <- lapply(sep.list, function(x) c(x$est[1], x$se[1])) %>% do.call("rbind", .) %>% as.data.frame#
+colnames(sep.tab) <- c("est", "se")#
+sep.tab$candidate_vote <- rep(parties_to, each = 8)#
+sep.tab$party_vote <- rep(parties_from, times = 2)#
+sep.tab$est <- formatC(sep.tab$est, digits = 3)#
+sep.tab$se <- formatC(sep.tab$se, digits = 3)#
+sep.tab$se <- sprintf("[%s]", sep.tab$se)#
+sep.tab$est <- paste(sep.tab$est, sep.tab$se, sep = " ")#
+sep.tab$se <- NULL#
+sep.tab <- dcast(sep.tab, party_vote ~ candidate_vote, value.var = "est")#
+colnames(sep.tab)[1] <- "Party Vote"#
+rownames(sep.tab) <- NULL#
+#
+print(xtable(sep.tab, caption = "RD estimates of incumbency on split vote shares for Labour and National candidates from six small parties (standard error in brackets)", label = "tab:rdd_sep"), caption.placement = getOption("xtable.caption.placement", "top"), size = "normalsize")
+sep.tab
+head(splitv_stats)
+rm(list=ls())#
+#
+#pkgs#
+library(XML)#
+library(htmltable)#
+#
+#2014#
+url1 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_2014"#
+url2 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_2011"#
+url3 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_2008"#
+url4 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_2005"#
+url5 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_2002"#
+url6 <- "http://en.wikipedia.org/wiki/New_Zealand_general_election,_1999"#
+#
+#2014#
+htmltable(url1, which = "/html/body/div[3]/div[3]/div[4]/table[11]/tbody")
+htmltable(url1, which = "/html/body/div[3]/div[3]/div[4]/table[11]")
+htmltable(url1, which = "/html/body/div[3]/div[3]/div[4]/table[11]", header = 1:2)
+htmltable(url1, which = "/html/body/div[3]/div[3]/div[4]/table[11]", header = 1)
+xpathSApply(url1, "/html/body/div[3]/div[3]/div[4]/table[11]/tbody/tr[3]")
+xpathSApply(htmlParse(url1), "/html/body/div[3]/div[3]/div[4]/table[11]/tbody/tr[3]")
+purl1 <- htmlParse(url1)#
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]/tbody/tr[3]")
+purl1
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]/tbody")
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]")
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]/tbody/tr[3]/td[1]/a[1]")
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]/*/tr")
+xpathSApply(purl1, "/html/body/div[3]/div[3]/div[4]/table[11]")
+readHTMLTable(url1)
+readHTMLTable(url1)
+readHTMLTable(url1, which = 4)
+readHTMLTable(url1, which = 5)
+readHTMLTable(url1, which = 6)
+readHTMLTable(url1, which = 7)
+readHTMLTable(url1, which = 8)
+readHTMLTable(url1, which = 9)
+readHTMLTable(url1, which = 12)
+readHTMLTable(url1, which = 13)
+readHTMLTable(url1, which = 14)
+readHTMLTable(url1, which = 15)
+tab <- readHTMLTable(url1, which = 15)
+tab
+tab[,1]
+getwd()
+### --------------------------------------------------------------#
+### AUTOMATED DATA COLLECTION WITH R#
+### SIMON MUNZERT, CHRISTIAN RUBBA, PETER MEISSNER, DOMINIC NYHUIS#
+####
+### CODE CHAPTER 1: INTRODUCTION#
+### --------------------------------------------------------------#
+# load packages#
+library(stringr)#
+library(XML)#
+library(maps)#
+### 1.1. Case Study: World Heritage Sites in Danger#
+### --------------------------------------------------------------#
+# parsing from Wikipedia web site#
+# heritage_parsed <- htmlParse("http://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger", encoding = "UTF-8")#
+# parsing from locally stored HTML file#
+heritage_parsed <- htmlParse("worldheritagedanger.htm",encoding="UTF-8")#
+tables <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE)#
+# danger_table <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE, which = 2) # alternatively: directly select second table#
+# extract desired table#
+danger_table <- tables[[2]]#
+names(danger_table)#
+# select and rename columns#
+danger_table <- danger_table[,c(1,3,4,6,7)]#
+colnames(danger_table) <- c("name","locn","crit","yins","yend")#
+danger_table$name[1:3]#
+# cleanse criteria#
+danger_table$crit <- ifelse(str_detect(danger_table$crit, "Natural")==T, "nat", "cult")#
+# cleanse years#
+danger_table$yins <- as.numeric(danger_table$yins)#
+danger_table$yend#
+yend_clean <- unlist(str_extract_all(danger_table$yend, "[[:digit:]]{4}$"))#
+danger_table$yend <- as.numeric(yend_clean)#
+danger_table$locn[c(1,3,5)]#
+# get countries#
+reg <- "[[:alpha:] ]+(?=[[:digit:]])"#
+country <- str_extract(danger_table$locn, perl(reg)) # use forward assertion in Perl regular expression#
+country#
+country[29] <- "Côte d'Ivoire / Guinea"#
+country[32] <- ""#
+danger_table$country <- country#
+# get coordinates#
+reg_y <- "[/][ -]*[[:digit:]]*[.]*[[:digit:]]*[;]"#
+reg_x <- "[;][ -]*[[:digit:]]*[.]*[[:digit:]]*"#
+y_coords <- str_extract(danger_table$locn, reg_y)#
+(y_coords <- as.numeric(str_sub(y_coords, 3, -2)))#
+danger_table$y_coords <- y_coords#
+x_coords <- str_extract(danger_table$locn, reg_x)#
+(x_coords <- as.numeric(str_sub(x_coords, 3, -1)))#
+danger_table$x_coords <- x_coords#
+danger_table$locn <- NULL#
+# plot endangered heritage sites#
+#pdf(file="heritage-map.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(0,0,0,0))#
+pch <- ifelse(danger_table$crit == "nat", 19, 2)#
+map("world", col = "darkgrey", lwd = .5, mar = c(0.1,0.1,0.1,0.1))#
+points(danger_table$x_coords, danger_table$y_coords, pch = pch, col = "black", cex = .8)#
+box()#
+#dev.off()#
+# table heritage criteria#
+table(danger_table$crit)#
+# plot year of endangerment#
+#pdf(file="heritage-hist1.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(danger_table$yend, freq=TRUE, xlab="Year when site was put on the list of endangered sites", main="")#
+box()#
+#dev.off()#
+# plot time between inscription and endangerment#
+duration <- danger_table$yend - danger_table$yins#
+#pdf(file="heritage-hist2.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(duration, freq=TRUE, xlab="Years it took to become an endangered site", main="")#
+box()#
+#dev.off()
+getwd()
+setwd("/Users/christian/ch-1-introduction/")
+### --------------------------------------------------------------#
+### AUTOMATED DATA COLLECTION WITH R#
+### SIMON MUNZERT, CHRISTIAN RUBBA, PETER MEISSNER, DOMINIC NYHUIS#
+####
+### CODE CHAPTER 1: INTRODUCTION#
+### --------------------------------------------------------------#
+# load packages#
+library(stringr)#
+library(XML)#
+library(maps)#
+### 1.1. Case Study: World Heritage Sites in Danger#
+### --------------------------------------------------------------#
+# parsing from Wikipedia web site#
+# heritage_parsed <- htmlParse("http://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger", encoding = "UTF-8")#
+# parsing from locally stored HTML file#
+heritage_parsed <- htmlParse("worldheritagedanger.htm",encoding="UTF-8")#
+tables <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE)#
+# danger_table <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE, which = 2) # alternatively: directly select second table#
+# extract desired table#
+danger_table <- tables[[2]]#
+names(danger_table)#
+# select and rename columns#
+danger_table <- danger_table[,c(1,3,4,6,7)]#
+colnames(danger_table) <- c("name","locn","crit","yins","yend")#
+danger_table$name[1:3]#
+# cleanse criteria#
+danger_table$crit <- ifelse(str_detect(danger_table$crit, "Natural")==T, "nat", "cult")#
+# cleanse years#
+danger_table$yins <- as.numeric(danger_table$yins)#
+danger_table$yend#
+yend_clean <- unlist(str_extract_all(danger_table$yend, "[[:digit:]]{4}$"))#
+danger_table$yend <- as.numeric(yend_clean)#
+danger_table$locn[c(1,3,5)]#
+# get countries#
+reg <- "[[:alpha:] ]+(?=[[:digit:]])"#
+country <- str_extract(danger_table$locn, perl(reg)) # use forward assertion in Perl regular expression#
+country#
+country[29] <- "Côte d'Ivoire / Guinea"#
+country[32] <- ""#
+danger_table$country <- country#
+# get coordinates#
+reg_y <- "[/][ -]*[[:digit:]]*[.]*[[:digit:]]*[;]"#
+reg_x <- "[;][ -]*[[:digit:]]*[.]*[[:digit:]]*"#
+y_coords <- str_extract(danger_table$locn, reg_y)#
+(y_coords <- as.numeric(str_sub(y_coords, 3, -2)))#
+danger_table$y_coords <- y_coords#
+x_coords <- str_extract(danger_table$locn, reg_x)#
+(x_coords <- as.numeric(str_sub(x_coords, 3, -1)))#
+danger_table$x_coords <- x_coords#
+danger_table$locn <- NULL#
+# plot endangered heritage sites#
+#pdf(file="heritage-map.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(0,0,0,0))#
+pch <- ifelse(danger_table$crit == "nat", 19, 2)#
+map("world", col = "darkgrey", lwd = .5, mar = c(0.1,0.1,0.1,0.1))#
+points(danger_table$x_coords, danger_table$y_coords, pch = pch, col = "black", cex = .8)#
+box()#
+#dev.off()#
+# table heritage criteria#
+table(danger_table$crit)#
+# plot year of endangerment#
+#pdf(file="heritage-hist1.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(danger_table$yend, freq=TRUE, xlab="Year when site was put on the list of endangered sites", main="")#
+box()#
+#dev.off()#
+# plot time between inscription and endangerment#
+duration <- danger_table$yend - danger_table$yins#
+#pdf(file="heritage-hist2.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(duration, freq=TRUE, xlab="Years it took to become an endangered site", main="")#
+box()#
+#dev.off()
+install.packages("maps")
+### --------------------------------------------------------------#
+### AUTOMATED DATA COLLECTION WITH R#
+### SIMON MUNZERT, CHRISTIAN RUBBA, PETER MEISSNER, DOMINIC NYHUIS#
+####
+### CODE CHAPTER 1: INTRODUCTION#
+### --------------------------------------------------------------#
+# load packages#
+library(stringr)#
+library(XML)#
+library(maps)#
+### 1.1. Case Study: World Heritage Sites in Danger#
+### --------------------------------------------------------------#
+# parsing from Wikipedia web site#
+# heritage_parsed <- htmlParse("http://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger", encoding = "UTF-8")#
+# parsing from locally stored HTML file#
+heritage_parsed <- htmlParse("worldheritagedanger.htm",encoding="UTF-8")#
+tables <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE)#
+# danger_table <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE, which = 2) # alternatively: directly select second table#
+# extract desired table#
+danger_table <- tables[[2]]#
+names(danger_table)#
+# select and rename columns#
+danger_table <- danger_table[,c(1,3,4,6,7)]#
+colnames(danger_table) <- c("name","locn","crit","yins","yend")#
+danger_table$name[1:3]#
+# cleanse criteria#
+danger_table$crit <- ifelse(str_detect(danger_table$crit, "Natural")==T, "nat", "cult")#
+# cleanse years#
+danger_table$yins <- as.numeric(danger_table$yins)#
+danger_table$yend#
+yend_clean <- unlist(str_extract_all(danger_table$yend, "[[:digit:]]{4}$"))#
+danger_table$yend <- as.numeric(yend_clean)#
+danger_table$locn[c(1,3,5)]#
+# get countries#
+reg <- "[[:alpha:] ]+(?=[[:digit:]])"#
+country <- str_extract(danger_table$locn, perl(reg)) # use forward assertion in Perl regular expression#
+country#
+country[29] <- "Côte d'Ivoire / Guinea"#
+country[32] <- ""#
+danger_table$country <- country#
+# get coordinates#
+reg_y <- "[/][ -]*[[:digit:]]*[.]*[[:digit:]]*[;]"#
+reg_x <- "[;][ -]*[[:digit:]]*[.]*[[:digit:]]*"#
+y_coords <- str_extract(danger_table$locn, reg_y)#
+(y_coords <- as.numeric(str_sub(y_coords, 3, -2)))#
+danger_table$y_coords <- y_coords#
+x_coords <- str_extract(danger_table$locn, reg_x)#
+(x_coords <- as.numeric(str_sub(x_coords, 3, -1)))#
+danger_table$x_coords <- x_coords#
+danger_table$locn <- NULL#
+# plot endangered heritage sites#
+#pdf(file="heritage-map.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(0,0,0,0))#
+pch <- ifelse(danger_table$crit == "nat", 19, 2)#
+map("world", col = "darkgrey", lwd = .5, mar = c(0.1,0.1,0.1,0.1))#
+points(danger_table$x_coords, danger_table$y_coords, pch = pch, col = "black", cex = .8)#
+box()#
+#dev.off()#
+# table heritage criteria#
+table(danger_table$crit)#
+# plot year of endangerment#
+#pdf(file="heritage-hist1.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(danger_table$yend, freq=TRUE, xlab="Year when site was put on the list of endangered sites", main="")#
+box()#
+#dev.off()#
+# plot time between inscription and endangerment#
+duration <- danger_table$yend - danger_table$yins#
+#pdf(file="heritage-hist2.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(duration, freq=TRUE, xlab="Years it took to become an endangered site", main="")#
+box()#
+#dev.off()
+library(testthat)
+rm(list=ls())#
+#
+#pkgs#
+library(testthat)
+rm(list=ls())#
+#
+#pkgs#
+library(testthat)#
+#
+setwd("~/Dropbox/ADCR (1)/homepage/materials/ch-1-introduction")#
+#
+source("ch-1-introduction.r")
+rm(list=ls())#
+#
+#pkgs#
+library(testthat)#
+#
+setwd("~/Dropbox/ADCR (1)/homepage/materials/ch-1-introduction/")#
+#
+source("ch-1-introduction.r")
+ls()
+dir()
+### --------------------------------------------------------------#
+### AUTOMATED DATA COLLECTION WITH R#
+### SIMON MUNZERT, CHRISTIAN RUBBA, PETER MEISSNER, DOMINIC NYHUIS#
+####
+### CODE CHAPTER 1: INTRODUCTION#
+### --------------------------------------------------------------#
+# load packages#
+library(stringr)#
+library(XML)#
+library(maps)#
+### 1.1. Case Study: World Heritage Sites in Danger#
+### --------------------------------------------------------------#
+# parsing from Wikipedia web site#
+# heritage_parsed <- htmlParse("http://en.wikipedia.org/wiki/List_of_World_Heritage_in_Danger", encoding = "UTF-8")#
+# parsing from locally stored HTML file#
+heritage_parsed <- htmlParse("worldheritagedanger.htm",encoding="UTF-8")#
+tables <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE)#
+# danger_table <- readHTMLTable(heritage_parsed, stringsAsFactors = FALSE, which = 2) # alternatively: directly select second table#
+# extract desired table#
+danger_table <- tables[[2]]#
+names(danger_table)#
+# select and rename columns#
+danger_table <- danger_table[,c(1,3,4,6,7)]#
+colnames(danger_table) <- c("name","locn","crit","yins","yend")#
+danger_table$name[1:3]#
+# cleanse criteria#
+danger_table$crit <- ifelse(str_detect(danger_table$crit, "Natural")==T, "nat", "cult")#
+# cleanse years#
+danger_table$yins <- as.numeric(danger_table$yins)#
+danger_table$yend#
+yend_clean <- unlist(str_extract_all(danger_table$yend, "[[:digit:]]{4}$"))#
+danger_table$yend <- as.numeric(yend_clean)#
+danger_table$locn[c(1,3,5)]#
+# get countries#
+reg <- "[[:alpha:] ]+(?=[[:digit:]])"#
+country <- str_extract(danger_table$locn, perl(reg)) # use forward assertion in Perl regular expression#
+country#
+country[29] <- "Côte d'Ivoire / Guinea"#
+country[32] <- ""#
+danger_table$country <- country#
+# get coordinates#
+reg_y <- "[/][ -]*[[:digit:]]*[.]*[[:digit:]]*[;]"#
+reg_x <- "[;][ -]*[[:digit:]]*[.]*[[:digit:]]*"#
+y_coords <- str_extract(danger_table$locn, reg_y)#
+(y_coords <- as.numeric(str_sub(y_coords, 3, -2)))#
+danger_table$y_coords <- y_coords#
+x_coords <- str_extract(danger_table$locn, reg_x)#
+(x_coords <- as.numeric(str_sub(x_coords, 3, -1)))#
+danger_table$x_coords <- x_coords#
+danger_table$locn <- NULL#
+# plot endangered heritage sites#
+#pdf(file="heritage-map.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(0,0,0,0))#
+pch <- ifelse(danger_table$crit == "nat", 19, 2)#
+map("world", col = "darkgrey", lwd = .5, mar = c(0.1,0.1,0.1,0.1))#
+points(danger_table$x_coords, danger_table$y_coords, pch = pch, col = "black", cex = .8)#
+box()#
+#dev.off()#
+# table heritage criteria#
+table(danger_table$crit)#
+# plot year of endangerment#
+#pdf(file="heritage-hist1.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(danger_table$yend, freq=TRUE, xlab="Year when site was put on the list of endangered sites", main="")#
+box()#
+#dev.off()#
+# plot time between inscription and endangerment#
+duration <- danger_table$yend - danger_table$yins#
+#pdf(file="heritage-hist2.pdf", height=3.3, width=7, family="URWTimes")#
+par(oma=c(0,0,0,0))#
+par(mar=c(4,4,1,.5))#
+hist(duration, freq=TRUE, xlab="Years it took to become an endangered site", main="")#
+box()#
+#dev.off()
+dir()
+source("ch-1-introduction.r")
+?source
+source("ch-1-introduction.r", encoding = "utf-8")

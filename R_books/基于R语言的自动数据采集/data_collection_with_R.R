@@ -15,8 +15,8 @@ library(RCurl)
 library(plyr)
 
 # 设置数据的路径----
-windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
-mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
+windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
+mac_path <- '/Users/machuan/CodeSpace/R/R'
 data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
 # 第一章 概述---------------------------------------------------
@@ -59,12 +59,10 @@ points(danger_table_clean$x_coords, danger_table_clean$y_coords,
 box()
 
 # 第二章 HTML-----------------------------------------------------
-setwd(file.path(data_path,
-                '基于R语言的自动数据收集/ch-2-html'))
-parsed_fortunes <- htmlParse('fortunes.html')
+parsed_fortunes <- htmlParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html')
 
 h1 <- list('body'=function(x){NULL})
-parsed_fortunes1 <- htmlTreeParse('fortunes.html',
+parsed_fortunes1 <- htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
                                   handlers = h1,
                                   asTree = T)
 
@@ -77,7 +75,7 @@ h2 <- list(
   comment = function(node) {NULL}
 )
 
-parsed_fortunes2 <- htmlTreeParse('fortunes.html',
+parsed_fortunes2 <- htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
                                   handlers = h2,
                                   asTree = T)
 
@@ -89,7 +87,8 @@ geItalics <- function(){
   return_I = function() i_container)
 }
 h3 <- geItalics()
-invisible(htmlTreeParse('fortunes.html', handlers = h3))
+invisible(htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
+                        handlers = h3))
 h3$return_I()
 
 
