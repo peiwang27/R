@@ -98,20 +98,25 @@ bond <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/bond.xm
 root <- xmlRoot(bond)
 xmlName(root)
 xmlSize(root)
+# xml转换成DataFrame或list
+movie.df <- xmlToDataFrame(root)
+movie.list <- xmlToList(root)
+
+technology_short <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/technology-short.xml')
+technology_short %>% xmlRoot() %>% xmlToDataFrame()
 
 
 # json
-isValidJSON('indy.json')
-con <- file('indy.json', 'r')
+isValidJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json')
+con <- file('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json', 'r')
 indy <- RJSONIO::fromJSON(con)
+indy <- RJSONIO::fromJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json') # fix 
 
 indy.vec <- unlist(indy, recursive = T, use.names = T)
 indy.vec[str_detect(names(indy.vec), 'name')]
 
 
 # 第四章 XPath
-setwd(file.path(data_path,
-                '基于R语言的自动数据收集/ch-4-xpath'))
 parsed_doc <- parsed_fortunes
 xpathSApply(parsed_doc, path = '/html/body/div/p/i')
 xpathSApply(parsed_doc, path='//p/i')
