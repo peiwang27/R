@@ -4,8 +4,8 @@ library(data.table)
 library(stringr)
 
 # run next code before install new version
-#row.names(installed.packages()) %>%
-#  write.table('installed.txt')
+row.names(installed.packages()) %>%
+  write.table('installed.txt')
 
 # 保存之后安装新的版本的R open
 wants <- read.table('installed.txt')
