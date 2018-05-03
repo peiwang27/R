@@ -182,7 +182,18 @@ regexpr(pattern,str)
 - data.table包
 ```{r data.table}
 library(data.table)
-
+# DT[i, j, by]
+set.seed(45L)
+dt <- data.table(v1 = c(1, 2),
+                 v2 = LETTERS[1:3],
+                 v3 = round(rnorm(4), 4),
+                 v4 = 1:12)
+# 选择行
+dt[v2 == 'A']
+# 选择列
+dt[v2 == 'A', .(v2, sum(v1))]
+# 聚合处理
+dt[, .(v4, sum(v3)), by=.(v1, v2)]
 ```
 # R语言数据预处理
 - 数据缺失
