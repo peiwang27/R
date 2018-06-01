@@ -17,15 +17,14 @@ library(data.table)
 library(bit64)
 library(ggplot2)
 
-#设置路径
-windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
-mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
-data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+#设置路径 默认路径
+#windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
+#mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
+#data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
 # 数据路径设置
-ch_data_path <- file.path(data_path,
-                            '数据科学实战手册_R_Python/Chapter0')
-ch_data_path <- str_c(ch_data_path, 1:11, '/data')
+ch_data_path <- str_c('./datasets/数据科学实战手册/Chapter0',
+                      1:11, '/data')
 
 # ch02 汽车数据可视化---------------------------------------------
 setwd(ch_data_path[2])
@@ -35,7 +34,6 @@ vehicles <- read_csv(unz('vehicles.csv.zip', 'vehicles.csv'),
 names(vehicles)
 vehilces_label <- do.call(rbind,
                           str_split(readLines('varlabels.txt'), '-'))
-
 vehicles$trany2 <- if_else(str_sub(vehicles$trany, 1, 4)=='Manu',
                            'Manu', 'Auto') %>% as.factor()
 
@@ -52,8 +50,8 @@ mpgByYr %>%
 
 gascars <- vehicles %>%
   filter(fuelType1 %in% c('Regular Gasoline',
-                         'Premium Gasoline',
-                         'Midgrade Gasoline'),
+                          'Premium Gasoline',
+                          'Midgrade Gasoline'),
          atvType != 'Hybrid')
 mpgByYr_gas <- gascars %>%
   group_by(year) %>%
@@ -168,7 +166,7 @@ d.state$empquantile <- cut(d.state$annual_avg_emplvl,
                                     c(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
 
 x1 <- quantile(d.state$avg_annual_pay,
-              c(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
+               c(seq(0,0.8,by=0.2), 0.9, 0.95, 0.99, 1))
 xx1 <- paste(round(x1/1000), 'K', sep='')
 labs1 <- paste(xx1[-length(xx1)], xx1[-1], sep='-')
 levels(d.state$wage) <- labs1

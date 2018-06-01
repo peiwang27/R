@@ -297,9 +297,20 @@ who %>% gather(5:60, key='key', value='cases', na.rm=T) %>% mutate(key=stringr::
 ```{r plyr}
 library(plyr)
 library(MASS)
-g <- split(Cars93$Price, Cars93$Origin)
+source("https://bioconductor.org/biocLite.R")
+biocLite("ath1121501.db") # 安装ath1121501.db
+library(ath1121501.db)
 
+g <- split(Cars93$Price, Cars93$Origin) # 对向量进行分组
+sapply(g, mean)
+lapply(g, length)
 
+m <- cbind(x=1:10, y=11:20)
+split(m, col(m)) # 对矩阵进行分组
+
+# ldply
+keggs <- as.list(ath1121501PATH[mappedkeys(ath1121501PATH)])
+ldply(keggs, paste, collapse=';') %>% head()
 
 head(iris)
 ddply(iris, .(Species), function(x) colMeans(x[, -5]))
