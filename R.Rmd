@@ -315,6 +315,41 @@ ldply(keggs, paste, collapse=';') %>% head()
 head(iris)
 ddply(iris, .(Species), function(x) colMeans(x[, -5]))
 iris_mean <- adply(iris3, 3, colMeans)
+
+# ddply with bnames
+bnames <- read_csv('./datasets/bnames.csv')
+letter <- function(x, n=1){
+  if(n<0){
+    nc <- nchar(x)
+    n <- nc + n + 1
+  }
+  tolower(substr(x, n, n))
+}
+vowels <- function(x){
+  nchar(gsub('^[aeiou]', '', x))
+}
+
+bnames_tran <- transform(bnames,
+                         first = letter(name, 1),
+                         last = letter(name, -1),
+                         length = nchar(name),
+                         vowels = vowels(name))
+
+pieces <- split(bnames, list(bnames$sex, bnames$year)) # transform every year and sex, not use ddply====>split
+result <- vector('list', length(pieces)) # create a new list with function vector======================>apply
+for(i in seq_along(pieces)){
+  piece <- pieces[[i]]
+  piece <- transform(piece,
+                     rank = rank(-percent, ties.method='first'))
+  result[[i]] <- piece
+}
+
+result <- do.call('rbind', result) # ===================> combine
+
+bnames_tran2 <- ddply(bnames, # use ddply, bnames means input data
+                      c(sex, year), # way to split up input
+                      transform, # function to apply to each piece
+                      rank = rank(-percent, ties.method='first'))
 ```
 ## dplyr包
 ```{r dplyr}
