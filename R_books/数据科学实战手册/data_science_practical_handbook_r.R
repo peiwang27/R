@@ -37,11 +37,15 @@ vehilces_label <- do.call(rbind,
 vehicles$trany2 <- if_else(str_sub(vehicles$trany, 1, 4)=='Manu',
                            'Manu', 'Auto') %>% as.factor()
 
-mpgByYr <- vehicles %>%
+mpgByYr <- vehicles %>% # 用管道运算符处理
   group_by(year) %>%
   summarise(avgMPG=mean(comb08),
             avgHghy=mean(highway08),
             avgCity=mean(city08))
+mpgByYr <- plyr::ddply(vehicles, c('year'), summarise, # use plyr::ddply
+                       avgMPG=mean(comb08),
+                       avgHghy=mean(highway08),
+                       avgCity=mean(city08))
 
 mpgByYr %>%
   ggplot(aes(x=year, y=avgMPG)) +
