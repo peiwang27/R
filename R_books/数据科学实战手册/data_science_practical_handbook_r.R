@@ -7,7 +7,7 @@ library(tidyverse)
 library(stringr)
 library(lubridate)
 library(XML)
-#library(RSQLite)
+library(RSQLite)
 library(zoo)
 library(reshape2)
 library(maps)
@@ -52,25 +52,41 @@ mpgByYr %>%
   geom_point() + geom_smooth() +
   xlab('Year') + ylab('AvgMpg') + ggtitle('All cars')
 
-gascars <- vehicles %>%
+gascars <- vehicles %>% # 管道运算符
   filter(fuelType1 %in% c('Regular Gasoline',
                           'Premium Gasoline',
                           'Midgrade Gasoline'),
          atvType != 'Hybrid')
+
 mpgByYr_gas <- gascars %>%
   group_by(year) %>%
   summarise(avgMPG=mean(comb08),
             avgHghy=mean(highway08),
             avgCity=mean(city08))
 
+mpgByYr_gas <- plyr::ddply(gascars,
+                           c('year'),
+                           summarise,
+                           avgMPG = mean(comb08))
+
 mpgByYr_gas %>%
   ggplot(aes(x=year, y=avgMPG)) +
   geom_point() + geom_smooth() +
-  labs(x='year', y='avgMPG', title='gas cars', subtitle='just for fun')
+  labs(x='year', y='avgMPG', title='gasonline cars', subtitle='just for fun')
+
+ggplot(gascars, aes(x=displ, y=comb08)) + geom_point() + geom_smooth()
+
+avgCarSize <- plyr::ddply(vehicles, c('year'),
+                          summarise,
+                          avgDispl=mean(displ))
+ggplot(avgCarSize, aes(x=year, y=avgDispl)) + geom_point() + geom_smooth() +
+  xlab('year') + ylab('avg displ') + ggtitle('avg displ per year')
 
 # ch03 模拟美式橄榄球比赛数据---------------------------------------
-# 缺少安装RSQLite包
-
+year <- 2003
+url <- paste("http://sports.yahoo.com/nfl/stats/byteam?group=Offense&cat=Total&conference=NFL&year=season_",
+             year,"&sort=530&old_category=Total&old_group=Offense")
+offense <- readHTMLTable(url, encoding='UTF-8', colClasses = 'Charater')[[7]] # data missing
 # ch04 分析股票市场数据---------------------------------------------
 setwd(ch_data_path[4])
 # 读取一行数据判断是否数据有标题
