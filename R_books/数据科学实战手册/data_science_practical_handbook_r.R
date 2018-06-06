@@ -18,13 +18,13 @@ library(bit64)
 library(ggplot2)
 
 #设置路径 默认路径
-#windows_path <- 'D:/WorkSpace/CodeSpace/Code.Data/R'
-#mac_path <- '/Users/machuan/CodeSpace/Code.Data/R'
-#data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
+mac_path <- '/Users/machuan/CodeSpace/R/R'
+data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
 
 # 数据路径设置
-ch_data_path <- str_c('./datasets/数据科学实战手册/Chapter0',
-                      1:11, '/data')
+ch_data_path <- str_c(data_path, '/datasets/数据科学实战手册/Chapter0',
+                      1:5, '/data', sep='')
 
 # ch02 汽车数据可视化---------------------------------------------
 setwd(ch_data_path[2])
@@ -83,10 +83,10 @@ ggplot(avgCarSize, aes(x=year, y=avgDispl)) + geom_point() + geom_smooth() +
   xlab('year') + ylab('avg displ') + ggtitle('avg displ per year')
 
 # ch03 模拟美式橄榄球比赛数据---------------------------------------
-year <- 2003
+year <- 2013
 url <- paste("http://sports.yahoo.com/nfl/stats/byteam?group=Offense&cat=Total&conference=NFL&year=season_",
-             year,"&sort=530&old_category=Total&old_group=Offense")
-offense <- readHTMLTable(url, encoding='UTF-8', colClasses = 'Charater')[[7]] # data missing
+             year,"&sort=530&old_category=Total&old_group=Offense", sep='')
+offense <- readHTMLTable(url, encoding='UTF-8', colClasses = 'Charater')[[7]] # 原url失效，需要重新确认新的url
 # ch04 分析股票市场数据---------------------------------------------
 setwd(ch_data_path[4])
 # 读取一行数据判断是否数据有标题
@@ -94,12 +94,12 @@ read_lines('finviz.csv', n_max=1)
 finviz <- read_csv('finviz.csv', na='')
 
 clean_numeric <- function(s){
-  return(
-    s %>%
-      str_replace_all('%|\\$|\\\\|,|\\)|\\(', '') %>%
-      as.numeric()
-  )
+  s %>%
+    str_replace_all('%|\\$|\\\\|,|\\)|\\(', '') %>%
+    as.numeric()
 }
+finviz_clean <- cbind(finviz[1:6], apply(finviz[7:69], 2, clean_numeric))
+
 hist(finviz$Price[finviz$Price<150], breaks=100, xla='Price')
 
 sector_avg_price <- finviz %>%
