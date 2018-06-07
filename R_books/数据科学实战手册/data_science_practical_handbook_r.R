@@ -102,6 +102,10 @@ finviz_clean <- cbind(finviz[1:6], apply(finviz[7:69], 2, clean_numeric))
 
 hist(finviz$Price[finviz$Price<150], breaks=100, xla='Price')
 
+sector_avg_price <- finviz_clean %>%
+  select(Sector, Price) %>%
+  plyr::ddply(c('Sector'), mean, na.rm=T)
+
 sector_avg_price <- finviz %>%
   group_by(Sector) %>%
   summarise(sector_avg_price=mean(Price))
