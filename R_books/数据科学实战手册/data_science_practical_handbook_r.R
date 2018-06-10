@@ -100,27 +100,66 @@ clean_numeric <- function(s){
 }
 finviz_clean <- cbind(finviz[1:6], apply(finviz[7:69], 2, clean_numeric))
 
-hist(finviz$Price[finviz$Price<150], breaks=100, xla='Price')
+hist(finviz_clean$Price[finviz$Price<150], breaks=100, xla='Price')
 
-sector_avg_price <- finviz %>%
+sector_avg_price <- finviz_clean %>%
   group_by(Sector) %>%
   summarise(sector_avg_price=mean(Price))
 
 sector_avg_price %>%
-  ggplot(aes(Sector, sector_avg_price)) +
+  ggplot(aes(Sector, sector_avg_price, fill=Sector)) +
   geom_bar(stat='identity') +
   labs(x='sector', y='sector_avg_price', title='Sector Avg Price') +
   theme(axis.text = element_text(angle = 45, hjust = 1))
 
+industry_avg_price <- aggregate(Price~Sector + Industry, data=finviz_clean, FUN = 'mean') %>%
+  arrange(Sector, Industry)
 
-sector_avg <- finviz %>%
-  melt(id='Sector', variable.name='variable') %>%
-  filter(variable %in% c('Price',
-                         'P/E',
-                         'PEG',
-                         'P/S',
-                         'P/B')) %>%
-  filter(!is.na(value))
+industry_chart <- industry_avg_price %>% filter(Sector == 'Financial')
+industry_chart %>% ggplot(aes(x=Industry, y=Price, fill=Industry)) +
+  geom_bar(stat = 'identity') +
+  theme(legend.position = 'none') +
+  ggtitle('Industry Avy Prices') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+company_chart <- finviz_clean %>%
+  filter(Industry == 'Property & Casualty Insurance')
+company_chart %>% ggplot(aes(x=Company, y=Price, fill=Company)) +
+  geom_bar(stat='identity') +
+  theme(legend.position = 'none') +
+  ggtitle('Company abg Price') +
+  theme(axis.text.x = element_text(angle=90, hjust=1))
+
+finviz_clean2 <- finviz_clean %>% filter(Company != 'Berkshire Hathaway Inc.')
+
+sector_avg_price2 <- finviz_clean2 %>%
+  group_by(Sector) %>%
+  summarise(sector_avg_price=mean(Price))
+
+sector_avg_price2 %>%
+  ggplot(aes(Sector, sector_avg_price, fill=Sector)) +
+  geom_bar(stat='identity') +
+  labs(x='sector', y='sector_avg_price', title='Sector Avg Price') +
+  theme(axis.text = element_text(angle = 45, hjust = 1))
+
+# 形成相对估值法
+sector_avg <- melt(finviz_clean2, id='Sector') %>%
+  filter(variable %in% c('Price', 'P/E', 'PEG', 'P/S', 'P/B')) %>%
+  filter(!is.na(value)) %>%
+  mutate(value = as.numeric(value))
+sector_avg_wide <- dcast(sector_avg, Sector~variable, mean)
+colnames(sector_avg_wide)[2:6] <- c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
+
+industry_avg <- melt(finviz_clean2, id=c('Sector', 'Industry')) %>%
+  filter(variable %in% c('Price', 'P/E', 'PEG', 'P/S', 'P/B')) %>%
+  filter(!is.na(value)) %>%
+  mutate(value=as.numeric(value))
+industry_avg_wide <- dcast(industry_avg, Sector + Industry ~ variable, mean)
+colnames(industry_avg_wide)[3:7] <- c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
+
+finviz_final <- finviz_clean2 %>%
+  merge(sector_avg_wide, by = 'Sector') %>%
+  merge(industry_avg_wide, by=c('Sector', 'Industry'))
 
 
 # ch05 就业数据的可视化---------------------------------------------
