@@ -166,9 +166,17 @@ url <- 'http://www.r-datacollection.com/materials/http/helloworld.html'
 curlPerform(url=url)
 
 
+# 第八章 字符串的处理
+if(!file.exists('listOfSimpsonsEpisodes.html')){
+  link <- 'https://en.wikipedia.org/wiki/List_of_The_Simpsons_episodes'
+  download.file(link, 'listOfSimpsonsEpisodes.html', mode='wb')
+}
+tables <- readHTMLTable('listOfSimpsonsEpisodes.html',
+                        header=T, 
+                        stringsAsFactors=F)
+
 # 第九章 scraping--------------------------------------------
-setwd(file.path(data_path,
-                '基于R语言的自动数据收集/ch-9-scraping'))
+setwd('./datasets/基于R语言的自动数据收集/ch-9-scraping')
 url <- str_c('http://www.elections.state.md.us/elections/2012',
              '/election_data/index.html',
              sep='')
