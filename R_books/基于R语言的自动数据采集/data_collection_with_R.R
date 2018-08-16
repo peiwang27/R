@@ -67,7 +67,8 @@ h3 <- list('p'=function(x){NULL},
 parsed_fortunes1 <- htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
                                   handlers = h1,
                                   asTree = T)
-parsed_fortunes3 <- htmlTreeParse(parsed_fortunes, handlers = h3, asTree = T)
+parsed_fortunes3 <- htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
+                                  handlers = h3, asTree = T)
 h2 <- list(
   startElement = function(node, ...){
     name <- xmlName(node)
