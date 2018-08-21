@@ -82,6 +82,7 @@ parsed_fortunes2 <- htmlTreeParse('./datasets/基于R语言的自动数据收集
                                   handlers = h2,
                                   asTree = T)
 
+# 不下载全部网页内容的处理方式
 geItalics <- function(){
   i_container = character()
   list(i = function(node, ...){
@@ -90,6 +91,7 @@ geItalics <- function(){
   return_I = function() i_container)
 }
 h3 <- geItalics()
+htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html', handlers = h3)
 invisible(htmlTreeParse('./datasets/基于R语言的自动数据收集/ch-2-html/fortunes.html',
                         handlers = h3))
 h3$return_I()
@@ -97,11 +99,19 @@ h3$return_I()
 
 # 第三章 XML and JSON---------------------------------------------
 # xml
+parsed_stocks <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/stocks/technology.xml')
+parsed_stocks2 <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/stocks/technology.xml', validate = T)
+
 bond <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/bond.xml')
 root <- xmlRoot(bond)
 xmlName(root)
 xmlSize(root)
-# xml转换成DataFrame或list
+
+# 使用xmlSApply()函数提取节点下面的元素
+root <- xmlRoot(bond)
+xmlSApply(root[[1]], xmlValue) # 提取元素的值，good
+xmlSApply(root[[1]], xmlAttrs)
+# xml转换成DataFrame或list，适用条件：离根节点最远的亲属节点是孙子节点活着子节点
 movie.df <- xmlToDataFrame(root)
 movie.list <- xmlToList(root)
 
