@@ -118,7 +118,26 @@ movie.list <- xmlToList(root)
 technology_short <- xmlParse('./datasets/基于R语言的自动数据收集/ch-3-xml/technology-short.xml')
 technology_short %>% xmlRoot() %>% xmlToDataFrame()
 
-
+# 事件驱动的解析
+branchFun <- function(){
+  container_close <- numeric()
+  container_date <- numeric()
+  
+  Apple <- function(node, ...){
+    date <- xmlValue(xmlChildren(node)[['date']])
+    container_date <<- c(container_date, date)
+    close <- xmlValue(xmlChildren(node)[['close']])
+    container_close <<- c(container_close, close)
+    print(c(close, date)); Sys.sleep(0.5)
+  }
+  getContainer <- function(){
+    data.frame(date=container_date, close=container_close)
+  }
+  list(Apple=Apple, getStore=getContainer)
+}
+h5 <- branchFun()
+invisible(xmlEventParse(file = './datasets/基于R语言的自动数据收集/ch-3-xml/stocks/technology.xml',
+                        branches = h5, handlers = list()))
 # json
 isValidJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json')
 con <- file('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json', 'r')
