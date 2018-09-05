@@ -142,13 +142,13 @@ invisible(xmlEventParse(file = './datasets/基于R语言的自动数据收集/ch
 isValidJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json')
 con <- file('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json', 'r')
 indy <- RJSONIO::fromJSON(con)
-indy <- RJSONIO::fromJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json') # fix 
+indy <- RJSONIO::fromJSON('./datasets/基于R语言的自动数据收集/ch-3-xml/indy.json') # fix me
 
 indy.vec <- unlist(indy, recursive = T, use.names = T)
 indy.vec[str_detect(names(indy.vec), 'name')]
 
 
-# 第四章 XPath
+# 第四章 XPath ---------
 parsed_doc <- parsed_fortunes
 xpathSApply(parsed_doc, path = '/html/body/div/p/i')
 xpathSApply(parsed_doc, path='//p/i')
