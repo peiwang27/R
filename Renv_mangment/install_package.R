@@ -8,7 +8,7 @@ row.names(installed.packages()) %>%
   write.table('installed.txt')
 
 # 保存之后安装新的版本的R open
-wants <- read.table('installed.txt')
+wants <- read.table('./R/Renv_mangment/installed.txt')
 has <- wants[,1] %in% rownames(installed.packages())
 if(any(!has)) install.packages(wants[!has, 1])
 
