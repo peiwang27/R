@@ -2,7 +2,7 @@
 title: "R语言总结"
 author: "machuan"
 date: "1/6/2017"
-output: word_document
+output: pdf_document
 editor_options: 
 chunk_output_type: console
 ---
@@ -88,7 +88,9 @@ read_excel(file, coltype)
 - jsonlite
 ```{r jsonlite}
 library(jsonlite)
+# 对json解析相对完整的包
 spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
+write_json(spending, ./datasets)
 names(spending)
 meta <- spending$meta
 hospital_spending <- data.frame(spending$data)
