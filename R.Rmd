@@ -21,6 +21,8 @@ library(reshape2)
 library(magrittr)
 library(tidyverse)
 library(car)
+library(dplyr)
+library(curl)
 ```
 # 数据读取路径的设置
 ```{r}
@@ -89,8 +91,8 @@ read_excel(file, coltype)
 ```{r jsonlite}
 library(jsonlite)
 # 对json解析相对完整的包
-spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
-write_json(spending, ./datasets)
+#spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
+spending <- fromJSON('./datasets/spending.json')
 names(spending)
 meta <- spending$meta
 hospital_spending <- data.frame(spending$data)
@@ -256,6 +258,7 @@ dcast(aqm, Day~Month+Test_variable) %>% head
 dcast(aqm, Month~Test_variable, sum) %>% head
 ```
 ## tidyr包
+- gather spread函数
 ```{r tidyr}
 table1 <- read_csv('country, year, cases, population
                    Afghanistan, 1999, 745, 19987071
@@ -294,6 +297,52 @@ table3 %>% separate(rate, into=c('cases', 'population'),
 
 # case study about tidyr using dataset who
 who %>% gather(5:60, key='key', value='cases', na.rm=T) %>% mutate(key=stringr::str_replace(key, 'newrel', 'new_rel')) %>% separate(key, into=c('new', 'type', 'sexage'), sep='_') %>% select(-new, -iso2, -iso3) %>% separate(sexage, c('sex', 'age'), sep=1)
+```
+- pivot_longer pivot_wider函数
+```{r tidyr::pivot_longer pivot_wider, echo=FALSE}
+relig_income %>% head()
+relig_income %>% pivot_longer(-religion, names_to = 'income', values_to = 'count')
+
+head(billboard)
+billboard %>%
+  pivot_longer(cols = starts_with('wk'),
+               names_to = 'week',
+               values_to = 'rank',
+               values_drop_na = T) %>%
+  head()
+
+billboard %>%
+  pivot_longer(cols = starts_with('wk'),
+               names_to = 'week',
+               names_prefix = 'wk',
+               values_to = 'rank',
+               values_drop_na = T,
+               names_ptypes = list(week=integer())) %>%
+  head()
+
+who %>%
+  pivot_longer(cols = new_sp_m014:newrel_f65,
+               names_to = c("diagnosis", "gender", "age"),
+               names_pattern = 'new_?(.*)_(.)(.*)',
+               values_to = 'count')
+
+family <- tibble::tribble(
+  ~family,  ~dob_child1,  ~dob_child2, ~gender_child1, ~gender_child2,
+       1L, "1998-11-26", "2000-01-29",             1L,             2L,
+       2L, "1996-06-22",           NA,             2L,             NA,
+       3L, "2002-07-11", "2004-04-05",             2L,             2L,
+       4L, "2004-10-10", "2009-08-27",             1L,             1L,
+       5L, "2000-12-05", "2005-02-28",             2L,             1L,
+)
+
+family <- family %>% dplyr::mutate_at(vars(starts_with('dob')), parse_date)
+family %>%
+  pivot_longer(-family,
+               names_to = c('.value', 'child'),
+               names_sep = '_',
+               values_drop_na = T) %>%
+  head()
+  
 ```
 
 ## plyr包
