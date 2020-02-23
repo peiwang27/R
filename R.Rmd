@@ -490,7 +490,6 @@ m3 <- merge(authors, books,
 ## 非结构化数据的处理
 ```{r rlist}
 library(rlist)
-library(rlist)
 devs <- list( p1=list(name="Ken",age=24,
                       interest=c("reading","music","movies"),
                       lang=list(r=2,csharp=4,python=3)),
