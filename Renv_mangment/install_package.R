@@ -17,6 +17,7 @@ winDownloadPath <- 'C:\\Users\\Admin\\AppData\\Local\\Temp\\RtmpMduBmL\\download
 setwd(winDownloadPath) # 已经下载的包的路径
 file_name <- dir(getwd())
 package_name <- sapply(file_name, function(x){return(str_replace(x, '(.*)_(.*)', '\\1'))}) # 提取安装的包的名称
+
 uninstall_package <- package_name[!(package_name %in% wants[,1])]
 
 for (i in 1:length(uninstall_package)) {

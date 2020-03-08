@@ -16,32 +16,38 @@ library(choroplethr)
 library(data.table)
 library(bit64)
 library(ggplot2)
+library(plyr)
 
 #设置路径 默认路径
-windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
+#windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
 mac_path <- '/Users/machuan/CodeSpace/R/R'
-data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
-
-# 数据路径设置
-ch_data_path <- str_c(data_path, '/datasets/数据科学实战手册/Chapter0',
-                      1:5, '/data', sep='')
+#data_path <- ifelse(Sys.info()[1]=='Windows', windows_path, mac_path)
+data_path <- mac_path
 
 # ch02 汽车数据可视化---------------------------------------------
-setwd(ch_data_path[2])
-
-vehicles <- read_csv(unz('vehicles.csv.zip', 'vehicles.csv'),
+vehicles <- read_csv(unz('./datasets/vehicles.csv.zip',
+                         'vehicles.csv'),
                      na='')
 names(vehicles)
-vehilces_label <- do.call(rbind,
-                          str_split(readLines('varlabels.txt'), '-'))
+vehicles_labels <- do.call(rbind,
+                           strsplit(readLines('./datasets/varlabels.txt'),
+                                    '-'))
 vehicles$trany2 <- if_else(str_sub(vehicles$trany, 1, 4)=='Manu',
                            'Manu', 'Auto') %>% as.factor()
+
+mpgByYr <- vehicles %>%
+  ddply(~year,
+        summarise,
+        avgMPG=mean(comb08),
+        avgHghy=mean(highway08),
+        avgCity=mean(city08))
 
 mpgByYr <- vehicles %>% # 用管道运算符处理
   group_by(year) %>%
   summarise(avgMPG=mean(comb08),
             avgHghy=mean(highway08),
             avgCity=mean(city08))
+
 mpgByYr <- plyr::ddply(vehicles, c('year'), summarise, # use plyr::ddply
                        avgMPG=mean(comb08),
                        avgHghy=mean(highway08),
@@ -83,10 +89,8 @@ ggplot(avgCarSize, aes(x=year, y=avgDispl)) + geom_point() + geom_smooth() +
   xlab('year') + ylab('avg displ') + ggtitle('avg displ per year')
 
 # ch03 模拟美式橄榄球比赛数据---------------------------------------
-year <- 2013
-url <- paste("http://sports.yahoo.com/nfl/stats/byteam?group=Offense&cat=Total&conference=NFL&year=season_",
-             year,"&sort=530&old_category=Total&old_group=Offense", sep='')
-offense <- readHTMLTable(url, encoding='UTF-8', colClasses = 'Charater')[[7]] # 原url失效，需要重新确认新的url
+
+
 # ch04 分析股票市场数据---------------------------------------------
 setwd(ch_data_path[4])
 # 读取一行数据判断是否数据有标题

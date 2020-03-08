@@ -1,0 +1,1159 @@
+---
+title: "R语言总结"
+author: "machuan"
+date: "1/6/2017"
+output: pdf_document
+editor_options: 
+chunk_output_type: console
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T)
+```
+# install packages from local source
+```{r}
+install.packages('path',repos=NULL,type="source")
+```
+
+# 加载的包及基本设置
+```{r library}
+library(ggplot2)
+library(reshape2) 
+library(magrittr)
+library(tidyverse)
+library(car)
+library(dplyr)
+library(curl)
+```
+# 数据读取路径的设置
+```{r}
+windows_path <- 'D:/WorkSpace/CodeSpace/R/R'
+tina_path <- '/Users/Tina/codespace/r'
+mac_path <- '/Users/machuan/CodeSpace/R/R'
+data_path <- ifelse(Sys.info()[1]=='Windows',
+                    windows_path,
+                    ifelse(Sys.info()['user']=='Tina',
+                           tina_path,
+                           mac_path))
+setwd(data_path)
+```
+
+# 数据的输入输出
+## 数据核查使用
+```{r}
+# 检查数据是否包含字符窜、以及是否全部为空
+library(MASS)
+data(Insurance)
+check_in <- function(x){
+  check_pattern <- '-|>' # contains '>' or '-'
+  return(grepl(check_pattern, x) %>% sum)
+}
+
+check_is.na <- function(x){
+  return(is.na(x) %>% sum)
+}
+
+apply(Insurance, 1, check_in)>0
+apply(Insurance, 1, check_is.na)
+```
+
+## excel文件的输出
+oldOpt <- options()
+options(xlsx.date.format='yyyy-MM-dd')
+write.xlsx(x, file_name, sheetName='sheetName', col.names=T, row.names=F)
+options(oldOpt)
+
+## excel文件的读取
+- RODBC包
+library(RODBC)
+con <- odbcConnectExcel2007(file)
+sqlTables(con) # 查看excel文件中sheet的名称
+sqlFetch(con, sheet_name)
+odbcClose(con)
+**当文件中的某列包含不同类型的数据时，读取的数据将变为NA，只能选择其他的数据读取方式。RODBC包最多能读取的列只有280列，多出的将丢弃，遇此类情况同样只能选择其他的包。**
+- xlsx包
+library(xlsx)
+read.xlsx(file, sheet_index, encoding)
+**效率低，容易出现内存不够用**
+- openxlsx包
+library(openxlsx)
+read.xlsx(file, sheet_index)
+**不能读取xls文件**
+- gdata包
+library(gdata)
+read.xls(file, fileEncoding, sep)
+**基本只能处理utf8编码**
+- readxl包
+library(readxl)
+read_excel(file, coltype)
+**不能读取xls**
+## json数据的获取
+- jsonlite
+```{r jsonlite}
+library(jsonlite)
+# 对json解析相对完整的包
+#spending <- fromJSON('https://data.medicare.gov/api/views/nrth-mfg3/rows.json?accessType=DOWNLOAD')
+spending <- fromJSON('./datasets/spending.json')
+names(spending)
+meta <- spending$meta
+hospital_spending <- data.frame(spending$data)
+colnames(hospital_spending) <- make.names(spending$meta$view$columns$name)
+hospital_spending <- select(hospital_spending, -c(sid:meta))
+```
+- rjson
+```{r rjosn}
+library(rjson)
+head(mtcars)
+jsoncars <- toJSON(mtcars)
+fromJSON(jsoncars)
+```
+
+
+# 字符串的处理
+- stringr()函数
+```{r stringr}
+library(stringr)
+data("USArrests")
+head(USArrests)
+state_name <- row.names(USArrests)
+# str_detect() 检查模式是否匹配
+str_detect(words, '^t') %>% sum
+str_detect(words, '[aeiou]$') %>% mean
+# str_count() 返回匹配模式的个数
+str_count(words, '[aeiou]')
+
+# str_subset() 提取匹配模式的结果
+str_subset(words, '^t')
+
+# str_extract()
+colours <- c('red', 'orange', 'yellow', 'green', 'blue', 'purple')
+colours_match <- str_c(colours, collapse='|')
+sentences %>% str_count(colours_match) %>% sum
+
+noun <- '(a|an|the) ([^ ]+)'
+sentences %>% str_subset(noun) %>% str_extract(noun)
+# str_match()以matrix的方式返回每个组的匹配结果
+sentences %>% str_subset(noun) %>% str_match(noun)
+
+shopping_list <- c("apples x4", "bag of flour", "bag of sugar", "milk x2")
+str_extract(shopping_list, '\\d')
+str_extract(shopping_list, '[a-z]+')
+str_extract(shopping_list, '[a-z]{1,4}')
+str_extract(shopping_list, '\\b[a-z]{1,4}\\b')
+
+# Extract all matches
+str_extract_all(shopping_list, "[a-z]+")
+str_extract_all(shopping_list, "\\b[a-z]+\\b")
+str_extract_all(shopping_list, "\\d")
+
+# Extract all words
+str_extract_all("This is, suprisingly, a sentence.", boundary("word"))
+
+# str_locate & str_locate_all
+fruit <- c("apple", "banana", "pear", "pineapple")
+str_locate(fruit, "$")
+str_locate(fruit, "a")
+str_locate(fruit, "e")
+str_locate(fruit, c("a", "b", "p", "p"))
+
+str_locate_all(fruit, "a")
+str_locate_all(fruit, "e")
+str_locate_all(fruit, c("a", "b", "p", "p"))
+
+# Find location of every character
+str_locate_all(fruit, "")
+
+# str_split
+fruits <- c(
+  "apples and oranges and pears and bananas",
+  "pineapples and mangos and guavas"
+)
+
+str_split(fruits, " and ")
+str_split(fruits, " and ", simplify = TRUE)
+
+# pmatch()
+```
+- 正则匹配
+```{r reg expression}
+pattern="^[A-Za-z0-9\\._%+-]+@[A-Za-z0-9\\.-]+\\.[A-Za-z]{2,4}$"
+str<-c("abc","someone@qiuworld.com","efg","anotherone@gmail.com","thirdone@yahoo.cn")
+#grepl会返回一个逻辑值，l就代表logical, g就代表global
+grepl(pattern,str)
+grep(pattern,str)
+#regexpr会返回一个数字，1表示匹配，-1表示不匹配，还会返回两个属性，匹配的长度以及是否使用useBytes。useBytes一般很少会使用到false，因为我们不处理宽字符。
+regexpr(pattern,str)
+```
+
+# R语言高性能包
+- data.table包
+```{r data.table}
+library(data.table)
+# DT[i, j, by]
+set.seed(45L)
+dt <- data.table(v1 = c(1, 2),
+                 v2 = LETTERS[1:3],
+                 v3 = round(rnorm(4), 4),
+                 v4 = 1:12)
+# 选择行
+dt[v2 == 'A']
+# 选择列
+dt[v2 == 'A', .(v2, sum(v1))]
+# 聚合处理
+dt[, .(v4, sum(v3)), by=.(v1, v2)]
+# 更新列的结果
+dt[, c('v1', 'v2') := list(round(exp(v1), 2), letters[4:6])]
+```
+# R语言数据预处理
+- 数据缺失
+```{r missing data}
+library(Rcpp)
+library(mice)
+data("nhanes2")
+head(nhanes2)
+complete.cases(nhanes2) %>% sum
+md.pattern(nhanes2)
+
+# 通过多重插补法处理缺失数据
+
+```
+
+# R语言数据整形
+## stack unstack函数
+```{r}
+x <- data.frame(A=1:4, B=seq(1.2, 1.5, 0.1), C=rep(1,4))
+x1 <- stack(x)
+unstack(x1, form = values~ind)
+```
+## transform()、with()函数
+transform()函数对数据框进行操作可以增加新列，改变列的取值，或者通过赋值为NULL删除列。
+with()函数的使用不限制数据框。
+```{r transform() with()}
+# transform()
+data("airquality")
+head(airquality)
+transform(airquality, log.Ozone=log(Ozone), Wind=Wind^2, Temp=NULL) %>% head
+# with()
+with(airquality, {
+  log.Ozone <- log(Ozone)
+  Wind <- Wind^2
+  rm(Ozone)
+})
+```
+## aggregate()函数
+```{r aggregate()}
+data(mtcars)
+attach(mtcars)
+aggregate(mtcars, by=list(cyl=cyl, vs=vs), mean, drop = F)
+aggregate(cbind(mpg, hp)~cyl+gear, data=mtcars, FUN=mean)
+detach(mtcars)
+```
+## reshape2包
+```{r reshape2}
+data("airquality")
+head(airquality)
+aqm <- melt(airquality, id=c('Month', 'Day'), measure.vars=c('Wind', 'Temp'),
+            variable.name = 'Test_variable', value.name = 'value')
+head(aqm)
+dcast(aqm, Day~Month+Test_variable) %>% head
+dcast(aqm, Month~Test_variable, sum) %>% head
+```
+## tidyr包
+- gather spread函数
+```{r tidyr}
+table1 <- read_csv('country, year, cases, population
+                   Afghanistan, 1999, 745, 19987071
+                   Afghanistan, 2000, 2666, 20595360
+                   Brazil, 1999, 37737, 172006362
+                   Brazil, 2000, 80488, 174504898
+                   China, 1999, 212258, 1271915272
+                   China, 2000, 213766, 1280428583')
+
+table2 <- read_csv('country, year, type, count
+                   Afghanistan, 1999, cases, 745
+                   Afghanistan, 1999, population, 19987071
+                   Afghanistan, 2000, cases, 2666
+                   Afghanistan, 2000, population, 20595360')
+
+table3 <- read_csv('country, year, rate
+                   Afghanistan, 1999, 745/19987071
+                   Afghanistan, 2000, 2666/20595360
+                   Brazil, 1999, 37737/172006362
+                   Brazil, 2000, 80488/174504898
+                   China, 1999, 212258/1271915272
+                   China, 2000, 213766/1280428583')
+
+table4a <- read_csv("country, '1999', '2000'
+                    Afghanistan, 745, 2666
+                    Brazil, 37737, 80488
+                    China, 212258, 213766")
+
+table4a %>% gather(2, 3, key='year', value='cases')
+# 另一种表达方式
+table4a %>% gather(year, cases, -country) # 查看help(gather)
+table2 %>% spread(key='type', value='count')
+
+table3 %>% separate(rate, into=c('cases', 'population'),
+                    remove=F, convert=T)
+
+# case study about tidyr using dataset who
+who %>% gather(5:60, key='key', value='cases', na.rm=T) %>% mutate(key=stringr::str_replace(key, 'newrel', 'new_rel')) %>% separate(key, into=c('new', 'type', 'sexage'), sep='_') %>% select(-new, -iso2, -iso3) %>% separate(sexage, c('sex', 'age'), sep=1)
+```
+- pivot_longer pivot_wider函数
+```{r tidyr::pivot_longer pivot_wider, echo=FALSE}
+relig_income %>% head()
+relig_income %>% pivot_longer(-religion, names_to = 'income', values_to = 'count')
+
+head(billboard)
+billboard %>%
+  pivot_longer(cols = starts_with('wk'),
+               names_to = 'week',
+               values_to = 'rank',
+               values_drop_na = T) %>%
+  head()
+
+billboard %>%
+  pivot_longer(cols = starts_with('wk'),
+               names_to = 'week',
+               names_prefix = 'wk',
+               values_to = 'rank',
+               values_drop_na = T,
+               names_ptypes = list(week=integer())) %>%
+  head()
+
+who %>%
+  pivot_longer(cols = new_sp_m014:newrel_f65,
+               names_to = c("diagnosis", "gender", "age"),
+               names_pattern = 'new_?(.*)_(.)(.*)',
+               values_to = 'count')
+
+family <- tibble::tribble(
+  ~family,  ~dob_child1,  ~dob_child2, ~gender_child1, ~gender_child2,
+       1L, "1998-11-26", "2000-01-29",             1L,             2L,
+       2L, "1996-06-22",           NA,             2L,             NA,
+       3L, "2002-07-11", "2004-04-05",             2L,             2L,
+       4L, "2004-10-10", "2009-08-27",             1L,             1L,
+       5L, "2000-12-05", "2005-02-28",             2L,             1L,
+)
+
+family <- family %>% dplyr::mutate_at(vars(starts_with('dob')), parse_date)
+family %>%
+  pivot_longer(-family,
+               names_to = c('.value', 'child'),
+               names_sep = '_',
+               values_drop_na = T) %>%
+  head()
+  
+```
+
+## plyr包
+函数split()可以按照分组因子，把向量，矩阵和数据框进行适当的分组,它的返回值是一个列表，代表分组变量每个水平的观测。这个列表可以使用sapply(), lappy()进行处理（apply – combine步骤），得到问题的最终结果。
+```{r plyr}
+library(plyr)
+library(MASS)
+source("https://bioconductor.org/biocLite.R")
+biocLite("ath1121501.db") # 安装ath1121501.db
+library(ath1121501.db)
+
+g <- split(Cars93$Price, Cars93$Origin) # 对向量进行分组
+sapply(g, mean)
+lapply(g, length)
+
+m <- cbind(x=1:10, y=11:20)
+split(m, col(m)) # 对矩阵进行分组
+
+# ldply
+keggs <- as.list(ath1121501PATH[mappedkeys(ath1121501PATH)])
+ldply(keggs, paste, collapse=';') %>% head()
+
+head(iris)
+ddply(iris, .(Species), function(x) colMeans(x[, -5]))
+iris_mean <- adply(iris3, 3, colMeans)
+
+# ddply with bnames
+bnames <- read_csv('./datasets/bnames.csv')
+letter <- function(x, n=1){
+  if(n<0){
+    nc <- nchar(x)
+    n <- nc + n + 1
+  }
+  tolower(substr(x, n, n))
+}
+vowels <- function(x){
+  nchar(gsub('^[aeiou]', '', x))
+}
+
+bnames_tran <- transform(bnames,
+                         first = letter(name, 1),
+                         last = letter(name, -1),
+                         length = nchar(name),
+                         vowels = vowels(name))
+
+pieces <- split(bnames, list(bnames$sex, bnames$year)) # transform every year and sex, not use ddply====>split
+result <- vector('list', length(pieces)) # create a new list with function vector======================>apply
+for(i in seq_along(pieces)){
+  piece <- pieces[[i]]
+  piece <- transform(piece,
+                     rank = rank(-percent, ties.method='first'))
+  result[[i]] <- piece
+}
+
+result <- do.call('rbind', result) # ===================> combine
+
+bnames_tran2 <- ddply(bnames, # use ddply, bnames means input data
+                      c(sex, year), # way to split up input
+                      transform, # function to apply to each piece
+                      rank = rank(-percent, ties.method='first'))
+```
+## dplyr包
+```{r dplyr}
+library(dplyr)
+library(Lahman)
+library(nycflights13)
+library(hflights)
+library(ggplot2)
+
+h_df <- tbl_df(hflights)
+head(h_df)
+# 筛选
+filter(h_df, Month %in% c(1, 2) & DayofMonth ==1) %>% head
+# 排列
+arrange(h_df, desc(DayofMonth), desc(Month), Year) %>% head
+# 选择
+select(h_df, Month:ArrTime) %>% head
+# 变形
+mutate(h_df, gain=ArrTime-DepTime) %>% head
+# 汇总
+summarise(h_df, delay=mean(DepDelay, na.rm = T), total_delay=sum(DepDelay, na.rm = T), num_delay=length(DepDelay))
+# 抽样, 按个数抽取或者按照比例抽取
+sample_n(h_df, 10)
+sample_frac(h_df, 0.0001)
+# 计数
+count(h_df, Year, Month, ArrTime) %>% head
+# 分组
+delays <- flights %>%
+  group_by(dest) %>%
+  summarise(
+    count=n(),
+    dist=mean(distance, na.rm=T),
+    delay=mean(arr_delay, na.rm=T)
+  ) %>%
+  filter(count>20, dest != 'HNL')
+ggplot(data=delays, mapping=aes(x=dist, y=delay))+geom_point(aes(size=count), alpha=1/3)+geom_smooth(se=T)
+
+# mutate join函数
+flight2 <- flights %>% select(year:day, hour, origin, dest, tailnum, carrier)
+flight2 %>% left_join(airlines, by='carrier')
+flight2 %>% left_join(airports, by=c('dest'='faa'))
+
+# filter join函数
+# semi_join(x, y)保留在y中可以匹配到的x观察项
+# anti_join(x, y)丢弃在y中可以匹配到的x观察项
+flights %>% semi_join(flights %>% count(dest, sort=T) %>% head(10), by='dest')
+flights %>% anti_join(planes %>% count(tailnum, sort=T) %>% head(10), by='tailnum')
+```
+## purrr
+```{r}
+
+```
+
+## 数据合并
+merge(x, y, by = intersect(names(x), names(y)),
+      by.x = by, by.y = by, all = FALSE, all.x = all, all.y = all,
+      sort = TRUE, suffixes = c(".x",".y"),
+      incomparables = NULL, ...)
+```{r merge()}
+authors <- data.frame(
+    surname = I(c("Tukey", "Venables", "Tierney", "Ripley", "McNeil")),
+    nationality = c("US", "Australia", "US", "UK", "Australia"),
+    deceased = c("yes", rep("no", 4)))
+books <- data.frame(
+    name = I(c("Tukey", "Venables", "Tierney",
+             "Ripley", "Ripley", "McNeil", "R Core")),
+    title = c("Exploratory Data Analysis",
+              "Modern Applied Statistics ...",
+              "LISP-STAT",
+              "Spatial Statistics", "Stochastic Simulation",
+              "Interactive Data Analysis",
+              "An Introduction to R"),
+    other.author = c(NA, "Ripley", NA, NA, NA, NA,
+                     "Venables & Smith"))
+m1 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all.x = T)
+m2 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all.y = T)
+m3 <- merge(authors, books,
+            by.x = 'surname', by.y = 'name',
+            all = T)
+```
+## 非结构化数据的处理
+```{r rlist}
+library(rlist)
+library(rlist)
+devs <- list( p1=list(name="Ken",age=24,
+                      interest=c("reading","music","movies"),
+                      lang=list(r=2,csharp=4,python=3)),
+              p2=list(name="James",age=25,
+                      interest=c("sports","music"),
+                      lang=list(r=3,java=2,cpp=5)),
+              p3=list(name="Penny",age=24,
+                      interest=c("movies","reading"),
+                      lang=list(r=1,cpp=4,python=2)))
+str(devs)
+# list.map()函数提供了list中元素的映射功能
+list.map(devs, age)
+list.map(devs, names(lang))
+list.map(devs, mean(as.numeric(lang))) %>% unlist
+
+list.filter(devs, age>=25) %>% str
+list.filter(devs, 'r' %in% names(lang)) %>% str
+
+list.group(devs, age) %>% str # 互斥分组
+list.class(devs, interest) %>% str # 非互斥分组
+
+```
+
+# R语言时间数据
+## lubridate函数
+```{r lubridate}
+library(lubridate)
+library(nycflights13)
+flights %>% select(year:day, hour, minute) %>%
+  mutate(departure=make_datetime(year, month, day, hour, minute))
+
+make_time_100 <- function(year, month, day, time){
+  make_datetime(year, month, day, time%/%100, time%%100)
+}
+
+flights_dt <- flights %>%
+  filter(!is.na(dest), !is.na(origin)) %>%
+  mutate(dep_time=make_time_100(year, month, day, dep_time),
+         arr_time=make_time_100(year, month, day, arr_time),
+         sched_dep_time=make_time_100(year, month, day, sched_dep_time),
+         sched_arr_time=make_time_100(year, month, day, sched_arr_time)) %>%
+  select(origin, dest, ends_with('delay'), ends_with('time'))
+```
+
+# R语言绘图
+- 绘图示例
+```{r}
+demo(graphics)
+demo(persp)
+```
+- 颜色、文字大小等设置
+```{r}
+plot(c(1:5), col='white')
+text(2, 4, labels='font=1:正常字体', font=1, cex=1.2)
+text(3, 3, labels='font=2:粗体字体', font=2, cex=1)
+text(4, 2, labels='font=3:斜体字体', font=3, cex=0.8)
+text(5, 1, labels='font=4:粗斜体字体', font=4, cex=0.6)
+```
+
+
+- 多元绘图函数
+```{r}
+# matplot函数
+y <- data.frame(x1=1:5, x2=rnorm(5, 0, 1), x3=rgamma(5,2,3))
+matplot(y, type='l', col=1:3, lwd=2)
+legend(1, 5, col=1:3, pch='—', legend=c('x1', 'x2', 'x3'))
+
+# coplot函数
+data("warpbreaks")
+coplot(breaks~1:54|wool*tension, data=warpbreaks,
+       col='red', bg='pink',
+       pch=21, bar.bg=c(fac='light blue'))
+```
+- The Basic Grammer of ggplot
+
+ggplot(data=<DATA>) +
+    <GEOM_FUNCTION>(
+            mapping=aes(<MAPPING>),
+            stat=<STAT>,
+            position=<POSITION>) +
+    <COORDINATE_SYSTEM> +
+    <FACET_FUNCTION>
+## 散点图
+- 使用plot()函数绘制
+```{r plot()绘制散点图}
+plot(rnorm(200), rnorm(200), type='p', col='red')
+```
+- 使用geom_point()绘制散点图
+```{r geom_point()}
+data(mpg)
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ))
+# 通过position='jitter'解决overplotting的问题
+ggplot(data=mpg) + geom_point(mapping = aes(x=hwy, y=displ), position='jitter')
+
+# 使用facet_grid和facet_wrap函数实现subplot功能
+ggplot(data=mpg) +
+  geom_point(mapping=aes(x=displ, y=hwy)) +
+  facet_wrap(~class, nrow=2)
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(drv~cyl)
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=displ, y=hwy)) + facet_grid(.~cyl)
+
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ, colour=drv))
+ggplot(data=mpg) + geom_smooth(mapping=aes(x=hwy, y=displ, group=drv))
+
+ggplot(data=mpg) + geom_point(mapping=aes(x=hwy, y=displ)) + geom_smooth(mapping=aes(x=hwy, y=displ))
+
+library(tidyverse)
+ggplot(data=mpg, mapping=aes(x=hwy, y=displ)) +
+  geom_point(mapping=aes(colour=class)) +
+  geom_smooth(data=filter(mpg, class=='subcompact'), se=T)
+```
+- qplot()函数
+```{r qplot()}
+data(diamonds)
+dsmall <- diamonds[sample(nrow(diamonds), 100), ]
+qplot(x=carat, y=price, data=dsmall, shape=color)
+qplot(x=carat, y=price, colour=color, data=dsmall)
+qplot(x=carat, y=price, data=diamonds, alpha=1/100, 
+      geom=c('point', 'smooth'))
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'))
+
+# 添加平滑曲线
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'),
+      span=0.1)
+qplot(x=carat, y=price, data=dsmall, geom=c('point', 'smooth'),
+      span=1)
+```
+## 折线图
+- plot()绘制
+```{r plot()绘制}
+data(cars)
+plot(cars, type='p')
+lines(stats::lowess(cars))
+```
+- geom_line()绘制
+```{r geom_line绘制}
+data(economics)
+ggplot(economics, aes(x=date, y=unemploy)) + geom_line()
+```
+## 条形图
+- barplot()函数绘制
+```{r barplot()}
+data(VADeaths)
+barplot(VADeaths, beside = T,
+        col = rainbow(20),
+        legend = row.names(VADeaths),
+        ylim = c(0, 100))
+
+barplot(VADeaths, beside = F,
+        col = rainbow(20),
+        legend = row.names(VADeaths),
+        ylim = c(0, 100))
+```
+- geom_bar()函数绘制
+```{r geom_bar()函数}
+data("diamonds")
+ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut))
+ggplot(data=diamonds)+geom_bar(mapping=aes(x=cut, fill=clarity))
+# 通过position参数调整柱状图的形状
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='dodge')
+
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='identity')
+
+ggplot(data=diamonds, mapping=aes(x=cut, fill=clarity))+geom_bar(position='fill')
+```
+## 面积图
+- geom_area()函数
+**需要查询geom_area(stat='bin')**的错误如何修正
+```{r geom_area()函数}
+data(diamonds)
+#ggplot(diamonds, aes(x=price, fill=cut)) +
+#  geom_bar(stat = 'identity')
+```
+## 密度估计图
+- plot()函数
+```{r plot()函数}
+ plot(density(rnorm(200)))
+```
+- geom_density()函数
+ggplot中aes() 函数使用col或者fill参数，得到的结果是不同的.
+```{r geom_density()函数}
+data(diamonds)
+ggplot(diamonds, aes(x=depth, col=cut)) +
+  geom_density()
+
+ggplot(diamonds, aes(x=depth, fill=cut)) +
+  geom_density()
+```
+## 频数图
+- geom_freqpoly()函数
+```{r geom_freqpoly()函数}
+data(diamonds)
+ggplot(diamonds, aes(x=price, col=cut)) +
+  geom_freqpoly(binwidth=500)
+```
+## 直方图
+- hist()函数
+```{r hist()函数}
+data(islands)
+hist(islands, breaks = 20, col='red', border='black', freq = T)
+hist(islands, breaks = 20, col='red', border='black', freq = F)
+```
+- geom_histogram()函数
+```{r geom_histogram()}
+ggplot(as.data.frame(islands), aes(islands)) +
+  geom_histogram(bins = 30)
+```
+## 箱线图
+- boxplot()函数
+```{r boxplot()函数}
+data("InsectSprays")
+boxplot(count~spray, data=InsectSprays, col='light gray')
+```
+- geom_boxplot()函数
+```{r geom_boxplot()}
+ggplot(InsectSprays, aes(x=spray, y=count)) +
+  geom_boxplot()
+
+ggplot(InsectSprays, aes(x=spray, y=count)) +
+  stat_boxplot(geom='errorbar', width=0.5) +
+  geom_boxplot()
+
+data(mpg)
+
+```
+## 提琴图
+- vioplot()函数
+```{r vioplot()}
+data(mtcars)
+library(sm)
+library(vioplot)
+x1 <- mtcars$mpg[mtcars$cyl==4]
+x2 <- mtcars$mpg[mtcars$cyl==6]
+x3 <- mtcars$mpg[mtcars$cyl==8]
+vioplot(x1, x2, x3, names = c('4cyl', '6 cyl', '8 cyl'),
+        col='gold')
+```
+- geom_violin()函数
+```{r geom_violin()函数}
+ggplot(mtcars, aes(x=factor(cyl), y=mpg)) + geom_violin()
+
+ggplot(mtcars, aes(x=factor(cyl), y=mpg)) + geom_violin() +
+  geom_boxplot(width=0.1)
+```
+## cleverland点图
+- dotchart()函数
+```{r dotchart()函数}
+data(mtcars)
+dotchart(mtcars$mpg, labels = row.names(mtcars), cex=0.6,
+         main='不同汽车的mpg',
+         xlab='mpg',
+         family='Kai')
+```
+- geom_dotplot()函数
+```{r geom_dotplot()函数}
+ggplot(mtcars, aes(x=mpg, y=row.names(mtcars), fill=row.names(mtcars))) +
+  geom_dotplot(binaxis = 'y',
+               stackgroups = T,
+               binwidth = 1,
+               method = 'histodot')
+```
+## 热力图
+- heatmap()函数
+```{r heatmap()}
+x <- as.matrix(mtcars)
+rc <- rainbow(nrow(mtcars), start=0, end=0.3)
+cc <- rainbow(ncol(mtcars), start=0, end=0.3)
+hv <- heatmap(x, col=cm.colors(256),
+              scale='column',
+              RowSideColors = rc,
+              ColSideColors = cc)
+```
+## 星状图、网状图、雷达图
+```{r}
+stars(head(mtcars), draw.segments = T)
+help(stars)
+```
+
+## 桑基图
+- riverplot
+```{r riverplot}
+library(riverplot)  
+  
+# 构造连接节点的数据框  
+edges = data.frame(N1 = paste0(rep(LETTERS[1:4], each = 4), rep(1:5, each = 16)),  
+                   N2 = paste0(rep(LETTERS[1:4], 4), rep(2:6, each = 16)),  
+                   Value = runif(80, min = 2, max = 5) * rep(c(1, 0.8, 0.6, 0.4, 0.3), each = 16),  
+                   stringsAsFactors = F)  
+# 筛选80%的记录，以免每个点都对应到4个点  
+edges = edges[sample(c(TRUE, FALSE), nrow(edges), replace = TRUE, prob = c(0.8, 0.2)),]  
+head(edges)  
+
+nodes = data.frame(ID = unique(c(edges$N1, edges$N2)), stringsAsFactors = FALSE)  
+#  
+nodes$x = as.integer(substr(nodes$ID, 2, 2))  
+nodes$y = as.integer(sapply(substr(nodes$ID, 1, 1), charToRaw)) - 65  
+#
+rownames(nodes) = nodes$ID
+head(nodes)
+
+# 添加颜色  
+library(RColorBrewer)  
+# 后面加调淡颜色  
+palette = paste0(brewer.pal(4, "Set1"), "60")  
+  
+# 对每个节点生成相应的格式  
+styles = lapply(nodes$y, function(n) {  
+  list(col = palette[n+1], lty = 0, textcol = "black")  
+})  
+names(styles) = nodes$ID  
+  
+  
+# 以list的结构保存一遍调用  
+rp <- list(nodes = nodes, edges = edges, styles = styles)  
+class(rp) <- c(class(rp), "riverplot")  
+plot(rp, plot_area = 0.95, yscale=0.06)
+```
+- d3NetWork
+```{r d3Network}
+library(d3Network)  
+d3links <- edges  
+d3nodes <- data.frame(name = unique(c(edges$N1, edges$N2)), stringsAsFactors = FALSE)  
+d3nodes$seq <- 0:(nrow(d3nodes) - 1)  
+  
+d3links <- merge(d3links, d3nodes, by.x="N1", by.y="name")  
+names(d3links)[4] <- "source"  
+  
+d3links <- merge(d3links, d3nodes, by.x="N2", by.y="name")  
+names(d3links)[5] <- "target"  
+names(d3links)[3] <- "value"  
+  
+d3links <- subset(d3links, select=c("source", "target", "value"))  
+d3nodes <- subset(d3nodes, select=c("name"))
+
+# 画图并保存为html文件  
+d3Sankey(Links = d3links, Nodes = d3nodes, Source = "source",  
+         Target = "target", Value = "value", NodeID = "name",  
+         fontsize = 12, nodeWidth = 30, file = "TestSankey.html") 
+```
+
+## 迁徙图
+- REmap包
+```{r}
+library(REmap)
+data <- read.csv('cityvaluetop10.csv', header=T)
+
+theme1 <- get_theme(theme='Dark',
+                    lineColor = 'white',
+                    backgroundColor = 'white',
+                    titleColor = '#fff',
+                    borderColor = "blue", 
+                    regionColor = "grey",
+                    labelShow = T, 
+                    pointShow = F, 
+                    pointColor = "gold")
+
+remapH(data,
+       maptype = 'china',
+       theme = theme1,
+       blurSize = 70,
+       color = "red",
+       minAlpha = 100,
+       opacity = 1)
+```
+
+```{r}
+library(REmap)
+cityvalue <- read.csv('cityvalue.csv',header=T,encoding="gb2312")
+
+theme1 <- get_theme(theme = "none", 
+                    lineColor = "red",
+                    backgroundColor = "white", 
+                    titleColor = "#fff",
+                    borderColor = "white", 
+                    regionColor = "grey",
+                    labelShow = F, 
+                    pointShow = F, 
+                    pointColor = "gold"
+                    )
+#此处手动填入前10城市数据，作线条用，并设置颜色为red
+markline_data <- data.frame(origin=rep("广州",10),
+         destination=c("广西","湖南","湖北","贵州",
+"河南","江西","福建","北京",
+"浙江","四川"),
+         color=rep("red",10)
+         )
+
+#此处设置前10城市数据，作点用，并设置颜色为grey
+markpoint_data <- data.frame(point=c("广西","湖南","湖北","贵州","河南","江西","福建","北京","浙江","四川"),color=rep("white",10))
+markline_control <- markLineControl(symbolSize=c(0,0),
+                                    smooth=F,
+                                    smoothness=0,
+                                    effect=F,
+                                    lineWidth=1,
+                                    lineType="solid"
+                                    )
+markpoint_control <- markPointControl(symbol = 'Circle',
+                                      symbolSize = 10,
+                                      effect = T,
+                                      effectType = 'scale'
+                                      )
+remapC(cityvalue,
+       maptype = 'china',
+       markLineData = markline_data,
+       markPointData = markpoint_data,
+       color = c('#888888','#CDCDCD'),
+       theme = theme1,
+       title = "",
+       subtitle = "",
+       markLineTheme = markline_control,
+       markPointTheme = markpoint_control
+       )
+```
+
+
+# 基本统计分析
+## 描述性统计
+```{r 描述性统计分析}
+# 基本的描述统计
+library(Hmisc)
+data(mtcars)
+str(mtcars)
+summary(mtcars)
+Hmisc::describe(mtcars)
+
+# 频数表和列联表
+library(vcd)
+head(Arthritis)
+```
+## 抽样
+strata(data, stratanames=NULL, size, method=c("srswor","srswr","poisson",
+"systematic"), pik,description=FALSE)
+```{r sample}
+library(MASS)
+data(Insurance)
+# 简单随机抽样
+Insurance[sample(nrow(Insurance), 10), ] # 无放回抽样
+Insurance[sample(nrow(Insurance), 10, replace = T), ] # 有放回抽样
+# 分层抽样
+library(sampling)
+Insurance_sub <- strata(Insurance, stratanames = 'District', size = c(1,2,3,4), method = 'srswor')
+getdata(Insurance, Insurance_sub)
+```
+## 相关性分析
+```{r cor cov}
+library(rattle)
+data(weather)
+cor(Insurance$Holders, Insurance$Claims) # 相关系数
+# 计算变量两两之间相关系数
+cor_matrix <- cor(weather[, 12:21], use = 'pairwise')
+
+library(ellipse)
+plotcorr(cor_matrix, col=rep(c('white', 'black'), 5))
+```
+
+# 回归分析
+拟合线性回归的基本函数lm()，调用的格式为：
+myfit <- lm(formula, data)
+formula为回归表达式，data为数据框。
+
+对于考虑交互关系的回归，可以通过effects包的effect()函数，查看交互项之间的影响。
+调用的格式为：plot(effect(term, mod, xlevels), multiline=T),其中term表示term表示要画的交互项，mod为拟合的模型，xlevel为设定的常量的取值。
+```{r lm()}
+data(women)
+myfit1 <- lm(weight~height, women)
+summary(myfit1)
+op <- par(no.readonly = T)
+par(mfrow=c(2,2))
+plot(myfit1)
+
+myfit2 <- lm(weight~height+I(height^2), data=women)
+summary(myfit2)
+plot(myfit2)
+par(op)
+plot(women$height, women$weight, xlab = 'height', ylab = 'weight')
+lines(women$height, fitted(myfit2))
+
+# 多元线性回归
+state <- state.x77[,
+                   c('Murder', 'Population', 'Illiteracy','Income',
+                     'Frost')] %>% as.data.frame()
+myfit3 <- lm(Murder~Population+Illiteracy+Income+Frost, data = state)
+
+# 考虑交互关系的回归
+library(effects)
+data(mtcars)
+myfit4 <- lm(mpg~hp+wt+hp:wt, data = mtcars)
+plot(effect('hp:wt', myfit4, xlevels=list(wt=c(1,2,3,4))), multiline = T)
+qqPlot(myfit3, labels=row.names(state), id.method='identify',simulate=T, main='Q-Q plot')
+```
+# 方差分析
+# 单因素方差分析
+```{r 单因素方差分析}
+# 单因素方差分析
+library(multcomp)
+library(mvtnorm)
+library(survival)
+library(TH.data)
+library(MASS)
+library(gplots)
+attach(cholesterol)
+table(cholesterol$trt)
+cholesterol %>% group_by(trt) %>%
+  summarise(mean=mean(response), sd=sd(response))
+aov_fit1 <- aov(response~trt, data=cholesterol)
+
+plotmeans(response~trt, xlab='trt', ylab='response', main='mean plot')
+detach(cholesterol)
+# 多重比较
+# glht()函数可以更好地表现多重比较的结果
+library(multcomp)
+TukeyHSD(aov_fit1)
+op <- par(no.readonly = T)
+par(mar=c(4,3,8,2))
+tuk <- glht(aov_fit1, linfct=mcp(trt='Tukey'))
+plot(cld(tuk, level=0.05), col='lightgrey')
+
+par(las=2)
+par(mar=c(5,4,8,2))
+plot(TukeyHSD(aov_fit1))
+par(op)
+
+# 评估检验的假设条件
+# 1.正态性检验
+library(car)
+qqPlot(lm(response~trt, data=cholesterol), simulate = T,
+       main = 'QQ plot', labels = T)
+# 2.方差齐次性检验
+bartlett.test(response~trt, data=cholesterol)
+
+```
+# 单因素协方差分析
+```{r 单因素协方差分析}
+data("litter", package = 'multcomp')
+attach(litter)
+table(dose)
+litter %>% group_by(dose) %>% summarise(mean=mean(weight))
+detach(litter)
+```
+# 关联分析
+- apriori(data, parameter = NULL, appearance = NULL, control = NULL)
+  - parameter:设定support,confidence,maxlen,minlen,target='rules/frequent items'
+  - appearance:对先决条件（lhs）和关联结果（rhs）包含的项进行限制
+- eclat(data, parameter = NULL, control = NULL)
+```{r arules arulesViz}
+library(arules)
+data("Groceries")
+inspect(Groceries[1:10])
+
+rules0 <- apriori(Groceries, parameter = list(support=0.001, confidence=0.5))
+rules0
+inspect(rules0[1:10])
+inspect(sort(rules0, by='support')[1:10])
+inspect(sort(rules0, by='confidence')[1:10])
+inspect(sort(rules0, by='lift')[1:10])
+
+rules2 <- apriori(Groceries, parameter = list(maxlen=2, support=0.001, confidence=0.1), appearance = list(rhs='mustard', default='lhs'))
+
+itemsets_apr <- apriori(Groceries, parameter = list(support=0.001, target='frequent itemsets'), control = list(sort=-1))
+inspect(itemsets_apr[1:10])
+
+items_ecl <- eclat(Groceries, parameter = list(minlen=1, maxlen=3, support=0.001, target='frequent itemsets'), control=list(sort=-1))
+inspect(items_ecl[1:10])
+
+# 关联规则的可视化
+library(grid)
+library(arulesViz)
+plot(rules0)
+plot(rules0, interactive = T)
+plot(rules0, shading = 'order', control = list(main='two-key plot'))
+```
+
+# 聚类分析
+- k均值聚类：
+kmeans(x, centers, iter.max = 10, nstart = 1,
+       algorithm = c("Hartigan-Wong", "Lloyd", "Forgy",
+                     "MacQueen"), trace=FALSE)
+- k中心点：
+pam(x, k, diss = inherits(x, "dist"), metric = "euclidean",
+    medoids = NULL, stand = FALSE, cluster.only = FALSE,
+    do.swap = TRUE,
+    keep.diss = !diss && !cluster.only && n < 100,
+    keep.data = !diss && !cluster.only,
+    pamonce = FALSE, trace.lev = 0)
+- 密度聚类：
+dbscan(data, eps, MinPts = 5, scale = FALSE, method = c("hybrid", "raw",
+    "dist"), seeds = TRUE, showplot = FALSE, countmode = NULL)
+    
+## 数据准备
+```{r countries data}
+country_path <- file.path(data_path, '数据挖掘_R语言实战/data/07/data.txt')
+countries <- read_table(country_path, col_names=F)
+names(countries) <- c('country', 'birth', 'death')
+countries %>% count(country) %>% filter(n>1)
+
+# 原始数据中FRANCE有两条，对此数据进行处理，删除FRANCE的数据
+countries <-  countries %>% filter(country != 'FRANCE')
+countries <- as.data.frame(countries)
+row.names(countries) <- countries$country
+plot(countries$birth, countries$death, xlab='birth', ylab='death', main='death verse birth')
+```
+
+
+## k均值聚类
+```{r kmeans}
+# K均值聚类
+fit_km1 <- kmeans(countries[, -1], centers=3)
+print(fit_km1)
+
+# 判断分多少类是最优的
+result <- rep(0, 67)
+for(k in 1:67){
+  fit_km <- kmeans(countries[, -1], centers=k)
+  result[k] <- fit_km$betweenss/fit_km$totss
+}
+round(result, 2)
+
+fit_km2 <- kmeans(countries[, -1], centers=10)
+print(fit_km2)
+```
+
+
+## k中心聚类
+```{r pam}
+# k中心聚类
+library(cluster)
+fit_pam1 <- pam(countries[, -1], k=3)
+print(fit_pam1)
+```
+
+
+## 系谱聚类
+```{r hclust}
+fit_hc1 <- hclust(dist(countries[, -1]))
+print(fit_hc1)
+plot(fit_hc1)
+
+group_k3 <- cutree(fit_hc1, k=3)
+print(group_k3)
+sapply(unique(group_k3), function(g) countries$country[group_k3==g])
+
+
+group_h18 <- cutree(fit_hc1, h=18)
+print(group_h18)
+sapply(unique(group_h18), function(g) countries$country[group_h18==g])
+```
+
+
+## 密度聚类
+```{r dbscan}
+library(fpc)
+
+```
+
+# 判别分析
+# 决策树
+# 集成学习
+# 随机森林
+# 支持向量机
+# 神经网络
