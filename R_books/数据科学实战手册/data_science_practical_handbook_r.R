@@ -89,20 +89,28 @@ ggplot(avgCarSize, aes(x=year, y=avgDispl)) + geom_point() + geom_smooth() +
   xlab('year') + ylab('avg displ') + ggtitle('avg displ per year')
 
 # ch03 模拟美式橄榄球比赛数据---------------------------------------
+# 却少数据
+# ch04 分析股票市场数据--------------------------------------------
 
 
-# ch04 分析股票市场数据---------------------------------------------
-setwd(ch_data_path[4])
 # 读取一行数据判断是否数据有标题
-read_lines('finviz.csv', n_max=1)
-finviz <- read_csv('finviz.csv', na='')
+read_lines('./datasets/finviz.csv', n_max=1)
+finviz <- read.csv('./datasets/finviz.csv',
+                   na='',
+                   stringsAsFactors=F)
+
+clean_numeric <- function(s){
+  s %>%
+    gsub('%|\\$|,|\\)|\\(', '') %>%
+    as.numeric()
+}
 
 clean_numeric <- function(s){
   s %>%
     str_replace_all('%|\\$|\\\\|,|\\)|\\(', '') %>%
     as.numeric()
 }
-finviz_clean <- cbind(finviz[1:6], apply(finviz[7:69], 2, clean_numeric))
+finviz_clean <- cbind(finviz[,1:6], apply(finviz[,7:69], 2, clean_numeric))
 
 hist(finviz_clean$Price[finviz$Price<150], breaks=100, xla='Price')
 
@@ -116,7 +124,8 @@ sector_avg_price %>%
   labs(x='sector', y='sector_avg_price', title='Sector Avg Price') +
   theme(axis.text = element_text(angle = 45, hjust = 1))
 
-industry_avg_price <- aggregate(Price~Sector + Industry, data=finviz_clean, FUN = 'mean') %>%
+industry_avg_price <- aggregate(Price~Sector + Industry,
+                                data=finviz_clean, FUN = 'mean') %>%
   arrange(Sector, Industry)
 
 industry_chart <- industry_avg_price %>% filter(Sector == 'Financial')
@@ -152,14 +161,16 @@ sector_avg <- melt(finviz_clean2, id='Sector') %>%
   filter(!is.na(value)) %>%
   mutate(value = as.numeric(value))
 sector_avg_wide <- dcast(sector_avg, Sector~variable, mean)
-colnames(sector_avg_wide)[2:6] <- c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
+colnames(sector_avg_wide)[2:6] <- 
+  c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
 
 industry_avg <- melt(finviz_clean2, id=c('Sector', 'Industry')) %>%
   filter(variable %in% c('Price', 'P/E', 'PEG', 'P/S', 'P/B')) %>%
   filter(!is.na(value)) %>%
   mutate(value=as.numeric(value))
 industry_avg_wide <- dcast(industry_avg, Sector + Industry ~ variable, mean)
-colnames(industry_avg_wide)[3:7] <- c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
+colnames(industry_avg_wide)[3:7] <- 
+  c('SAvgPE', 'SAvgPEG', 'SAvgPS', 'SAvgPB', 'SAvgPrice')
 
 finviz_final <- finviz_clean2 %>%
   merge(sector_avg_wide, by = 'Sector') %>%
