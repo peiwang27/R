@@ -433,7 +433,7 @@ count(h_df, Year, Month, ArrTime) %>% head
 delays <- flights %>%
   group_by(dest) %>%
   summarise(
-    count=n(),
+    count=length(dest),
     dist=mean(distance, na.rm=T),
     delay=mean(arr_delay, na.rm=T)
   ) %>%

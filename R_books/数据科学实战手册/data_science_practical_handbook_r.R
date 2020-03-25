@@ -115,11 +115,16 @@ finviz_clean <- cbind(finviz[,1:6], apply(finviz[,7:69], 2, clean_numeric))
 hist(finviz_clean$Price[finviz$Price<150], breaks=100, xla='Price')
 
 sector_avg_price <- finviz_clean %>%
-  group_by(Sector) %>%
-  summarise(sector_avg_price=mean(Price))
+  dplyr::group_by(Sector) %>%
+  dplyr::summarise(sector_avg_price=mean(Price))
+
+sector_avg_price <- aggregate(Price~Sector,
+                              data=finviz_clean,
+                              FUN='mean')
+sector_avg_price <- as.data.frame(sector_avg_price)
 
 sector_avg_price %>%
-  ggplot(aes(Sector, sector_avg_price, fill=Sector)) +
+  ggplot(aes(Sector, Price, fill=Sector)) +
   geom_bar(stat='identity') +
   labs(x='sector', y='sector_avg_price', title='Sector Avg Price') +
   theme(axis.text = element_text(angle = 45, hjust = 1))
